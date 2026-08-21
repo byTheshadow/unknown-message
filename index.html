@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1, viewport-fit=cover"
+  />
+  <meta name="theme-color" content="#f4f4f1" />
+
+  <title>未读信号 · UNKNOWN MESSAGE</title>
+
+  <link rel="stylesheet" href="./styles/base.css" />
+  <link rel="stylesheet" href="./styles/loading.css" />
+</head>
+
+<body>
+  <div id="app">
+    <!-- 加载页 -->
+    <section
+      id="loading-screen"
+      class="loading-screen"
+      aria-label="正在初始化未读信号"
+    >
+      <div class="loading-grain" aria-hidden="true"></div>
+      <div class="ambient-light" aria-hidden="true"></div>
+
+      <div class="screen-frame" aria-hidden="true">
+        <i class="frame-corner corner-top-left"></i>
+        <i class="frame-corner corner-top-right"></i>
+        <i class="frame-corner corner-bottom-left"></i>
+        <i class="frame-corner corner-bottom-right"></i>
+      </div>
+
+      <header class="loading-header">
+        <div class="header-status">
+          <i class="status-dot"></i>
+          <span>CHANNEL / OPEN</span>
+        </div>
+
+        <div class="header-status">
+          <span class="signal-bars" aria-hidden="true">
+            <i></i>
+            <i></i>
+            <i></i>
+            <i></i>
+            <i></i>
+          </span>
+          <span>LINE 01</span>
+        </div>
+      </header>
+
+      <main class="connection-stage">
+        <div class="orbit orbit-large" aria-hidden="true"></div>
+        <div class="orbit orbit-medium" aria-hidden="true"></div>
+        <div class="orbit orbit-small" aria-hidden="true"></div>
+
+        <div class="signal-beam beam-1" aria-hidden="true"></div>
+        <div class="signal-beam beam-2" aria-hidden="true"></div>
+        <div class="signal-beam beam-3" aria-hidden="true"></div>
+        <div class="signal-beam beam-4" aria-hidden="true"></div>
+        <div class="signal-beam beam-5" aria-hidden="true"></div>
+
+        <div class="connection-node">
+          <img
+            class="connection-icon"
+            src="./assets/icons/call-signal.svg"
+            alt=""
+          />
+        </div>
+
+        <div class="connection-copy">
+          <p class="connection-title">正在建立连接</p>
+          <p class="connection-subtitle">
+            INITIALIZING TRANSMISSION CHANNEL
+          </p>
+        </div>
+
+        <div class="loading-progress" aria-hidden="true">
+          <span class="loading-progress-value"></span>
+        </div>
+      </main>
+
+      <aside class="loading-side-label" aria-hidden="true">
+        SIGNAL / SEARCHING
+      </aside>
+
+      <footer class="loading-footer">
+        <span>LOCAL INTERFACE · READY</span>
+        <span id="loading-time">00:00:00</span>
+      </footer>
+    </section>
+
+    <!-- 主界面：下一步制作提问箱与设置页 -->
+    <main id="home-screen" class="home-screen" hidden>
+      <div class="home-background" aria-hidden="true"></div>
+
+      <header class="home-header">
+        <p class="brand-cn">未读信号</p>
+        <p class="brand-en">UNKNOWN MESSAGE</p>
+      </header>
+
+      <section class="home-content">
+        <p class="home-eyebrow">LOCAL MESSAGE INTERFACE</p>
+        <h1>有一条未读信号<br />正在等待被打开</h1>
+
+        <nav class="home-actions" aria-label="主功能">
+          <button class="entry-button" type="button" data-route="question">
+            <span>提问箱</span>
+            <span class="entry-arrow" aria-hidden="true">↗</span>
+          </button>
+
+          <button class="entry-button" type="button" data-route="settings">
+            <span>设置</span>
+            <span class="entry-arrow" aria-hidden="true">↗</span>
+          </button>
+        </nav>
+      </section>
+
+      <footer class="home-footer">
+        <span>ALL RECORDS STAY ON THIS DEVICE</span>
+      </footer>
+    </main>
+  </div>
+
+  <script src="./scripts/app.js"></script>
+</body>
+</html>
