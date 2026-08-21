@@ -12,6 +12,8 @@
 
   <link rel="stylesheet" href="./styles/base.css" />
   <link rel="stylesheet" href="./styles/loading.css" />
+  <link rel="stylesheet" href="./styles/question.css" />
+  <link rel="stylesheet" href="./styles/transmission.css" />
 </head>
 
 <body>
@@ -40,11 +42,7 @@
 
         <div class="header-status">
           <span class="signal-bars" aria-hidden="true">
-            <i></i>
-            <i></i>
-            <i></i>
-            <i></i>
-            <i></i>
+            <i></i><i></i><i></i><i></i><i></i>
           </span>
           <span>LINE 01</span>
         </div>
@@ -91,8 +89,8 @@
       </footer>
     </section>
 
-    <!-- 主界面：下一步制作提问箱与设置页 -->
-    <main id="home-screen" class="home-screen" hidden>
+    <!-- 主界面 -->
+    <main id="home-screen" class="app-screen home-screen" hidden>
       <div class="home-background" aria-hidden="true"></div>
 
       <header class="home-header">
@@ -107,12 +105,20 @@
         <nav class="home-actions" aria-label="主功能">
           <button class="entry-button" type="button" data-route="question">
             <span>提问箱</span>
-            <span class="entry-arrow" aria-hidden="true">↗</span>
+            <img
+              class="entry-arrow"
+              src="./assets/icons/arrow-up-right.svg"
+              alt=""
+            />
           </button>
 
           <button class="entry-button" type="button" data-route="settings">
             <span>设置</span>
-            <span class="entry-arrow" aria-hidden="true">↗</span>
+            <img
+              class="entry-arrow"
+              src="./assets/icons/arrow-up-right.svg"
+              alt=""
+            />
           </button>
         </nav>
       </section>
@@ -121,8 +127,202 @@
         <span>ALL RECORDS STAY ON THIS DEVICE</span>
       </footer>
     </main>
+
+    <!-- 提问箱 -->
+    <main
+      id="question-screen"
+      class="app-screen question-screen"
+      aria-label="提问箱"
+      hidden
+    >
+      <header class="subpage-header">
+        <button
+          class="icon-button"
+          type="button"
+          data-route="home"
+          aria-label="返回主页"
+        >
+          <img src="./assets/icons/close.svg" alt="" />
+        </button>
+
+        <div class="subpage-brand">
+          <p>未读信号</p>
+          <span>QUESTION BOX</span>
+        </div>
+
+        <span class="subpage-index" aria-hidden="true">01</span>
+      </header>
+
+      <section class="question-content">
+        <div class="question-heading">
+          <p class="section-label">NEW QUESTION</p>
+          <h1>写下这一次<br />想发送的问题</h1>
+        </div>
+
+        <form id="question-form" class="question-form" novalidate>
+          <label class="input-field" for="target-name">
+            <span class="input-label">提问对象</span>
+            <input
+              id="target-name"
+              name="targetName"
+              type="text"
+              maxlength="24"
+              autocomplete="off"
+              placeholder="输入姓名或称呼"
+              required
+            />
+            <span class="input-line" aria-hidden="true"></span>
+          </label>
+
+          <label class="input-field question-textarea-field" for="question-text">
+            <span class="input-label">问题内容</span>
+            <textarea
+              id="question-text"
+              name="questionText"
+              rows="4"
+              maxlength="200"
+              placeholder="此刻，你想问什么？"
+              required
+            ></textarea>
+            <span class="textarea-count">
+              <span id="question-count">0</span> / 200
+            </span>
+            <span class="input-line" aria-hidden="true"></span>
+          </label>
+
+          <p id="form-message" class="form-message" role="status"></p>
+
+          <button id="send-question-button" class="send-button" type="submit">
+            <span>发送问题</span>
+            <img src="./assets/icons/send.svg" alt="" />
+          </button>
+        </form>
+      </section>
+
+      <footer class="subpage-footer">
+        <span>INPUT IS STORED LOCALLY</span>
+        <span id="current-waiting-label">WAIT LIMIT / 05:00</span>
+      </footer>
+    </main>
+
+    <!-- 传输中 -->
+    <main
+      id="transmission-screen"
+      class="app-screen transmission-screen"
+      aria-label="正在发送问题"
+      hidden
+    >
+      <div class="transmission-noise" aria-hidden="true"></div>
+      <div class="transmission-halo halo-one" aria-hidden="true"></div>
+      <div class="transmission-halo halo-two" aria-hidden="true"></div>
+
+      <header class="subpage-header transmission-header">
+        <button
+          id="cancel-transmission-button"
+          class="icon-button"
+          type="button"
+          aria-label="取消本次发送"
+        >
+          <img src="./assets/icons/close.svg" alt="" />
+        </button>
+
+        <div class="subpage-brand">
+          <p>未读信号</p>
+          <span>OUTGOING MESSAGE</span>
+        </div>
+
+        <span class="subpage-index" id="transmission-index">01</span>
+      </header>
+
+      <section class="transmission-content">
+        <div class="transmission-machine" aria-hidden="true">
+          <div class="machine-ring machine-ring-outer"></div>
+          <div class="machine-ring machine-ring-middle"></div>
+          <div class="machine-ring machine-ring-inner"></div>
+
+          <div class="machine-axis axis-horizontal"></div>
+          <div class="machine-axis axis-vertical"></div>
+
+          <div class="machine-center">
+            <span></span>
+          </div>
+
+          <i class="data-particle particle-a"></i>
+          <i class="data-particle particle-b"></i>
+          <i class="data-particle particle-c"></i>
+          <i class="data-particle particle-d"></i>
+        </div>
+
+        <div class="transmission-copy">
+          <p class="section-label">MESSAGE SENT</p>
+          <h1>信号已发出</h1>
+          <p id="transmission-status" class="transmission-status">
+            正在等待回复抵达
+          </p>
+        </div>
+
+        <div class="question-preview">
+          <p id="preview-target-name">—</p>
+          <span></span>
+          <blockquote id="preview-question-text">—</blockquote>
+        </div>
+
+        <div class="wait-panel">
+          <div class="wait-panel-top">
+            <span>RESPONSE WINDOW</span>
+            <strong id="wait-countdown">05:00</strong>
+          </div>
+
+          <div class="wait-track" aria-hidden="true">
+            <span id="wait-progress"></span>
+          </div>
+
+          <p>回复可能在此时间内的任意时刻抵达</p>
+        </div>
+      </section>
+
+      <footer class="subpage-footer transmission-footer">
+        <span id="transmission-footer-status">CHANNEL / ACTIVE</span>
+        <span>KEEP THIS PAGE OPEN</span>
+      </footer>
+    </main>
+
+    <!-- 设置页占位：下一步做完整功能 -->
+    <main
+      id="settings-screen"
+      class="app-screen settings-screen"
+      aria-label="设置"
+      hidden
+    >
+      <header class="subpage-header">
+        <button
+          class="icon-button"
+          type="button"
+          data-route="home"
+          aria-label="返回主页"
+        >
+          <img src="./assets/icons/close.svg" alt="" />
+        </button>
+
+        <div class="subpage-brand">
+          <p>未读信号</p>
+          <span>SETTINGS</span>
+        </div>
+
+        <span class="subpage-index" aria-hidden="true">02</span>
+      </header>
+
+      <section class="settings-placeholder">
+        <p class="section-label">PREFERENCES</p>
+        <h1>设置</h1>
+        <p>下一步将在这里加入回复时长、字卡分类与字卡管理。</p>
+      </section>
+    </main>
   </div>
 
+  <script src="./scripts/storage.js"></script>
+  <script src="./scripts/router.js"></script>
   <script src="./scripts/app.js"></script>
 </body>
 </html>
+

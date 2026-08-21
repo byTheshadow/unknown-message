@@ -242,15 +242,7 @@ button:focus-visible {
   }
 }
 
-@media (min-width: 760px) {
-  .home-screen {
-    max-width: 700px;
-    min-height: 100svh;
-    margin: 0 auto;
-    border-right: 1px solid rgba(18, 18, 18, 0.08);
-    border-left: 1px solid rgba(18, 18, 18, 0.08);
-  }
-}
+
 
 @media (prefers-reduced-motion: reduce) {
   *,
@@ -260,5 +252,180 @@ button:focus-visible {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
+  }
+}
+/* --------------------------------
+   通用子页面结构
+-------------------------------- */
+
+.app-screen {
+  position: relative;
+  width: 100%;
+  min-height: 100svh;
+  overflow: hidden;
+}
+
+.app-screen.is-entering {
+  animation: page-slide-in 0.58s cubic-bezier(0.22, 0.8, 0.22, 1) both;
+}
+
+.app-screen.is-leaving {
+  pointer-events: none;
+  animation: page-fade-out 0.3s ease both;
+}
+
+.subpage-header {
+  position: relative;
+  z-index: 3;
+  display: grid;
+  grid-template-columns: 42px 1fr 42px;
+  align-items: center;
+  width: 100%;
+  padding:
+    max(22px, env(safe-area-inset-top))
+    clamp(20px, 6vw, 50px)
+    0;
+}
+
+.icon-button {
+  display: grid;
+  width: 42px;
+  height: 42px;
+  padding: 0;
+  cursor: pointer;
+  border: 1px solid rgba(18, 18, 18, 0.14);
+  border-radius: 50%;
+  place-items: center;
+  background: rgba(255, 255, 255, 0.3);
+  transition:
+    transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1),
+    background 0.3s ease;
+}
+
+.icon-button img {
+  width: 16px;
+  height: 16px;
+}
+
+.icon-button:active {
+  background: rgba(18, 18, 18, 0.08);
+  transform: rotate(90deg) scale(0.92);
+}
+
+.subpage-brand {
+  text-align: center;
+}
+
+.subpage-brand p,
+.subpage-brand span,
+.subpage-index {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 0.14em;
+}
+
+.subpage-brand p {
+  color: var(--ink);
+  font-family: var(--font-sans);
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.16em;
+}
+
+.subpage-brand span,
+.subpage-index {
+  color: var(--ink-soft);
+  font-size: 8px;
+}
+
+.subpage-index {
+  justify-self: end;
+}
+
+.subpage-footer {
+  position: absolute;
+  right: clamp(20px, 6vw, 50px);
+  bottom: max(24px, env(safe-area-inset-bottom));
+  left: clamp(20px, 6vw, 50px);
+  z-index: 3;
+  display: flex;
+  justify-content: space-between;
+  color: var(--ink-soft);
+  font-family: var(--font-mono);
+  font-size: 8px;
+  letter-spacing: 0.11em;
+}
+
+.section-label {
+  margin: 0;
+  color: var(--ink-soft);
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 0.16em;
+}
+
+.settings-screen {
+  background:
+    radial-gradient(
+      circle at 65% 25%,
+      rgba(255, 255, 255, 0.9),
+      transparent 32%
+    ),
+    var(--paper);
+}
+
+.settings-placeholder {
+  padding: clamp(80px, 17vh, 155px) clamp(24px, 7vw, 58px);
+}
+
+.settings-placeholder h1 {
+  margin: 18px 0 20px;
+  font-size: clamp(34px, 9vw, 52px);
+  font-weight: 400;
+  letter-spacing: 0.1em;
+}
+
+.settings-placeholder p:last-child {
+  max-width: 19em;
+  margin: 0;
+  color: var(--ink-soft);
+  font-size: 14px;
+  letter-spacing: 0.06em;
+  line-height: 2;
+}
+
+@keyframes page-slide-in {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes page-fade-out {
+  to {
+    opacity: 0;
+    transform: scale(0.985);
+  }
+}
+
+@media (min-width: 760px) {
+  .app-screen {
+    max-width: 700px;
+    margin: 0 auto;
+    border-right: 1px solid rgba(18, 18, 18, 0.08);
+    border-left: 1px solid rgba(18, 18, 18, 0.08);
+  }
+}
+
+@media (max-width: 390px) {
+  .subpage-footer {
+    font-size: 7px;
+    letter-spacing: 0.08em;
   }
 }
