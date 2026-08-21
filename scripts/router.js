@@ -1,62 +1,53 @@
 (() => {
-  const screenIds = {
-    home: "home-screen",
-    question: "question-screen",
-    transmission: "transmission-screen",
-    settings: "settings-screen"
-  };
+  let currentScreen = null;
+  let isNavigating = false;
 
-  let currentRoute = "home";
-  let isTransitioning = false;
-
-  function getScreen(routeName) {
-    const screenId = screenIds[routeName];
-    return document.getElementById(screenId);
-  }
-
-  function showRoute(routeName) {
-    if (!screenIds[routeName]) {
-      console.warn(`不存在的页面路由：${routeName}`);
+  function showScreen(nextScreen, animationName = "screen-enter") {
+    if (!nextScreen || nextScreen === currentScreen || isNavigating) {
       return;
     }
 
-    if (routeName === currentRoute || isTransitioning) {
-      return;
-    }
+    isNavigating = true;
 
-    const currentScreen = getScreen(currentRoute);
-    const nextScreen = getScreen(routeName);
-
-    isTransitioning = true;
-
-    if (currentScreen) {
-      currentScreen.classList.remove("is-entering");
-      currentScreen.classList.add("is-leaving");
-    }
-
-    window.setTimeout(() => {
-      if (currentScreen) {
-        currentScreen.hidden = true;
-        currentScreen.classList.remove("is-leaving");
-      }
-
+    if (!currentScreen) {
       nextScreen.hidden = false;
-      nextScreen.classList.remove("is-leaving");
+      nextScreen.classList.add(animationName);
 
-      /*
-        重新赋予 entering 类，确保回到同一页面时动画仍然能播放。
-      */
       requestAnimationFrame(() => {
-        nextScreen.classList.add("is-entering");
+        nextScreen.classList.remove(animationName);
       });
 
-      currentRoute = routeName;
-      isTransitioning = false;
-    }, 280);
+      currentScreen = nextScreen;
+      isNavigating = false;
+      return;
+    }
+
+    currentScreen.classList.add("screen-exit");
+
+    window.setTimeout(() => {
+      currentScreen.hidden = true;
+      currentScreen.classList.remove("screen-exit");
+
+      nextScreen.hidden = false;
+      nextScreen.classList.add(animationName);
+
+      requestAnimationFrame(() => {
+        nextScreen.classList.remove(animationName);
+      });
+
+      currentScreen = nextScreen;
+      isNavigating = false;
+    }, 260);
+  }
+
+  function setInitialScreen(screen) {
+    currentScreen = screen;
+    screen.hidden = false;
   }
 
   window.UnknownMessageRouter = {
-    showRoute,
-    getCurrentRoute: () => currentRoute
+    showScreen,
+    setInitialScreen,
+    getCurrentScreen: () => currentScreen
   };
 })();
