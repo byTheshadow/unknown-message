@@ -19,15 +19,13 @@ function normalizeCustomCategories(value) {
       return result;
     }
 
-    const safeCards = [
+    result[safeName] = [
       ...new Set(
         cards
           .map((card) => String(card || "").trim())
           .filter(Boolean)
       )
     ];
-
-    result[safeName] = safeCards;
 
     return result;
   }, {});
@@ -80,8 +78,7 @@ export function saveSettings(settings) {
     );
   } catch {
     /*
-      若宿主沙箱临时禁止 localStorage 写入，
-      不阻断当前页面的其他交互。
+      localStorage 不可用时不阻断当前页面交互。
     */
   }
 }
@@ -118,7 +115,7 @@ export function saveConversation(conversation) {
     localStorage.setItem(CONVERSATION_KEY, JSON.stringify(conversation));
   } catch {
     /*
-      不阻断当前传讯流程。
+      localStorage 不可用时不阻断当前传讯流程。
     */
   }
 }
@@ -128,7 +125,7 @@ export function clearConversation() {
     localStorage.removeItem(CONVERSATION_KEY);
   } catch {
     /*
-      不阻断当前页面。
+      不阻断页面。
     */
   }
 }

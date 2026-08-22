@@ -21,6 +21,11 @@ const categoryDialogTitle = document.querySelector("#categoryDialogTitle");
 const categoryDialogNote = document.querySelector("#categoryDialogNote");
 const categoryNameInput = document.querySelector("#categoryNameInput");
 
+const cardDialogLayer = document.querySelector("#cardDialogLayer");
+const cardForm = document.querySelector("#cardForm");
+const cardContentInput = document.querySelector("#cardContentInput");
+const cardDialogNote = document.querySelector("#cardDialogNote");
+
 const importDialogLayer = document.querySelector("#importDialogLayer");
 const importForm = document.querySelector("#importForm");
 const importCategorySelect = document.querySelector("#importCategorySelect");
@@ -29,6 +34,11 @@ const importResult = document.querySelector("#importResult");
 
 let settings = getSettings();
 let editingCategoryName = null;
+
+let editingCard = {
+  categoryName: null,
+  originalCard: null
+};
 
 function escapeHtml(value) {
   const element = document.createElement("div");
@@ -59,7 +69,7 @@ function getAllCategoryNames() {
   ];
 }
 
-function getAllCardValues() {
+function getAllCards() {
   const builtInCards = Object.values(cardCategories).flat();
 
   const customCards = Object.values(settings.customCategories || {})
@@ -73,10 +83,6 @@ function getAllCardValues() {
   );
 }
 
-function saveCurrentSettings() {
-  saveSettings(settings);
-}
-
 function ensureActiveCategoriesAreValid() {
   const validNames = new Set(getAllCategoryNames());
 
@@ -85,6 +91,11 @@ function ensureActiveCategoriesAreValid() {
       (settings.activeCategories || []).filter((name) => validNames.has(name))
     )
   ];
+}
+
+function saveCurrentSettings() {
+  ensureActiveCategoriesAreValid();
+  saveSettings(settings);
 }
 
 function updateWaitRangeVisual() {
@@ -126,9 +137,7 @@ function renderCategoryToggles() {
         <label class="category-toggle-row">
           <span class="category-toggle-name">
             <strong>${escapeHtml(name)}</strong>
-            <span>
-              ${isBuiltIn ? "BUILT-IN" : "CUSTOM"} / ${cards.length} CARDS
-            </span>
+            <span>${isBuiltIn ? "BUILT-IN" : "CUSTOM"} / ${cards.length} CARDS</span>
           </span>
 
           <span class="toggle-control">
@@ -149,9 +158,9 @@ function renderCategoryToggles() {
 }
 
 function renderCustomCategories() {
-  const names = getCustomCategoryNames();
+  const categoryNames = getCustomCategoryNames();
 
-  if (!names.length) {
+  if (!categoryNames.length) {
     customCategoryList.innerHTML = `
       <div class="empty-custom-categories">
         还没有自定义分类。可以先新建一个分类，再导入字卡。
@@ -161,15 +170,49 @@ function renderCustomCategories() {
     return;
   }
 
-  customCategoryList.innerHTML = names
-    .map((name) => {
-      const cards = settings.customCategories[name] || [];
+  customCategoryList.innerHTML = categoryNames
+    .map((categoryName) => {
+      const cards = settings.customCategories[categoryName] || [];
+
+      const cardRows = cards.length
+        ? cards
+          .map((card) => `
+            <div class="custom-card-row">
+              <span class="custom-card-copy">${escapeHtml(card)}</span>
+
+              <div class="custom-card-actions">
+                <button
+                  class="card-mini-button"
+                  type="button"
+                  data-edit-card-category="${escapeHtml(categoryName)}"
+                  data-edit-card-value="${escapeHtml(card)}"
+                >
+                  编辑
+                </button>
+
+                <button
+                  class="card-mini-button is-danger"
+                  type="button"
+                  data-delete-card-category="${escapeHtml(categoryName)}"
+                  data-delete-card-value="${escapeHtml(card)}"
+                >
+                  删除
+                </button>
+              </div>
+            </div>
+          `)
+          .join("")
+        : `
+          <div class="empty-custom-cards">
+            当前分类还没有字卡。
+          </div>
+        `;
 
       return `
         <article class="custom-category-card">
           <header class="custom-category-header">
             <div class="custom-category-title">
-              <strong>${escapeHtml(name)}</strong>
+              <strong>${escapeHtml(categoryName)}</strong>
               <span>${cards.length} CARDS / CUSTOM CATEGORY</span>
             </div>
 
@@ -177,7 +220,7 @@ function renderCustomCategories() {
               <button
                 class="category-mini-button"
                 type="button"
-                data-rename-category="${escapeHtml(name)}"
+                data-rename-category="${escapeHtml(categoryName)}"
               >
                 改名
               </button>
@@ -185,24 +228,15 @@ function renderCustomCategories() {
               <button
                 class="category-mini-button is-danger"
                 type="button"
-                data-delete-category="${escapeHtml(name)}"
+                data-delete-category="${escapeHtml(categoryName)}"
               >
-                删除
+                删除分类
               </button>
             </div>
           </header>
 
-          <div class="custom-card-chips">
-            ${
-              cards.length
-                ? cards
-                  .map(
-                    (card) =>
-                      `<span class="custom-card-chip">${escapeHtml(card)}</span>`
-                  )
-                  .join("")
-                : `<span class="custom-card-chip">当前分类还没有字卡</span>`
-            }
+          <div class="custom-card-list">
+            ${cardRows}
           </div>
         </article>
       `;
@@ -211,10 +245,10 @@ function renderCustomCategories() {
 }
 
 function renderImportCategoryOptions() {
-  const customNames = getCustomCategoryNames();
+  const categoryNames = getCustomCategoryNames();
 
-  importCategorySelect.innerHTML = customNames.length
-    ? customNames
+  importCategorySelect.innerHTML = categoryNames.length
+    ? categoryNames
       .map(
         (name) =>
           `<option value="${escapeHtml(name)}">${escapeHtml(name)}</option>`
@@ -222,7 +256,7 @@ function renderImportCategoryOptions() {
       .join("")
     : `<option value="">请先新建一个自定义分类</option>`;
 
-  importCategorySelect.disabled = !customNames.length;
+  importCategorySelect.disabled = !categoryNames.length;
 }
 
 function renderAll() {
@@ -251,6 +285,7 @@ function openCategoryDialog(categoryName = null) {
     : "分类名称不能与现有内置分类或自定义分类重复。";
 
   categoryNameInput.value = categoryName || "";
+
   categoryDialogLayer.classList.remove("is-hidden");
 
   window.setTimeout(() => {
@@ -265,17 +300,47 @@ function closeCategoryDialog() {
   editingCategoryName = null;
 }
 
-function openImportDialog() {
-  const customNames = getCustomCategoryNames();
+function openCardDialog(categoryName, card) {
+  editingCard = {
+    categoryName,
+    originalCard: card
+  };
 
-  if (!customNames.length) {
+  cardContentInput.value = card;
+  cardDialogNote.textContent =
+    "内容会自动清理首尾空格，且不能与已有字卡重复。";
+
+  cardDialogLayer.classList.remove("is-hidden");
+
+  window.setTimeout(() => {
+    cardContentInput.focus();
+    cardContentInput.select();
+  }, 30);
+}
+
+function closeCardDialog() {
+  cardDialogLayer.classList.add("is-hidden");
+  cardForm.reset();
+
+  editingCard = {
+    categoryName: null,
+    originalCard: null
+  };
+}
+
+function openImportDialog() {
+  const categoryNames = getCustomCategoryNames();
+
+  if (!categoryNames.length) {
     openCategoryDialog();
     return;
   }
 
+  renderImportCategoryOptions();
+
   importTextarea.value = "";
   importResult.textContent = "";
-  renderImportCategoryOptions();
+
   importDialogLayer.classList.remove("is-hidden");
 
   window.setTimeout(() => {
@@ -295,6 +360,7 @@ function createOrRenameCategory(event) {
   const nextName = categoryNameInput.value.trim();
 
   if (!nextName) {
+    categoryDialogNote.textContent = "请填写分类名称。";
     categoryNameInput.focus();
     return;
   }
@@ -303,20 +369,21 @@ function createOrRenameCategory(event) {
   const customNames = new Set(getCustomCategoryNames());
 
   const isSameName = editingCategoryName === nextName;
-  const conflictsWithBuiltIn = builtInNames.has(nextName);
-  const conflictsWithCustom = customNames.has(nextName) && !isSameName;
 
-  if (conflictsWithBuiltIn || conflictsWithCustom) {
-    categoryDialogNote.textContent = "该名称已经存在，请使用另一个分类名称。";
+  if (
+    builtInNames.has(nextName) ||
+    (customNames.has(nextName) && !isSameName)
+  ) {
+    categoryDialogNote.textContent = "该分类名称已经存在，请使用其他名称。";
     categoryNameInput.focus();
     return;
   }
 
   if (editingCategoryName) {
-    const originalCards = settings.customCategories[editingCategoryName] || [];
+    const cards = settings.customCategories[editingCategoryName] || [];
 
     delete settings.customCategories[editingCategoryName];
-    settings.customCategories[nextName] = originalCards;
+    settings.customCategories[nextName] = cards;
 
     settings.activeCategories = settings.activeCategories.map((name) =>
       name === editingCategoryName ? nextName : name
@@ -325,7 +392,6 @@ function createOrRenameCategory(event) {
     settings.customCategories[nextName] = [];
   }
 
-  ensureActiveCategoriesAreValid();
   saveCurrentSettings();
   renderAll();
   closeCategoryDialog();
@@ -334,11 +400,11 @@ function createOrRenameCategory(event) {
 function deleteCategory(categoryName) {
   const cards = settings.customCategories[categoryName] || [];
 
-  const confirmed = window.confirm(
+  const shouldDelete = window.confirm(
     `确认删除分类“${categoryName}”吗？该分类下的 ${cards.length} 张字卡也会一并删除。`
   );
 
-  if (!confirmed) {
+  if (!shouldDelete) {
     return;
   }
 
@@ -352,34 +418,100 @@ function deleteCategory(categoryName) {
   renderAll();
 }
 
+function saveEditedCard(event) {
+  event.preventDefault();
+
+  const categoryName = editingCard.categoryName;
+  const originalCard = editingCard.originalCard;
+  const nextCard = cardContentInput.value.trim();
+
+  if (!categoryName || !originalCard) {
+    closeCardDialog();
+    return;
+  }
+
+  if (!nextCard) {
+    cardDialogNote.textContent = "字卡内容不能为空。";
+    cardContentInput.focus();
+    return;
+  }
+
+  if (nextCard !== originalCard) {
+    const allCards = getAllCards();
+
+    if (allCards.has(nextCard)) {
+      cardDialogNote.textContent = "该字卡内容已经存在，无法重复保存。";
+      cardContentInput.focus();
+      return;
+    }
+  }
+
+  const cards = settings.customCategories[categoryName];
+
+  if (!Array.isArray(cards)) {
+    closeCardDialog();
+    return;
+  }
+
+  const cardIndex = cards.indexOf(originalCard);
+
+  if (cardIndex < 0) {
+    closeCardDialog();
+    return;
+  }
+
+  cards[cardIndex] = nextCard;
+
+  saveCurrentSettings();
+  renderAll();
+  closeCardDialog();
+}
+
+function deleteCard(categoryName, card) {
+  const shouldDelete = window.confirm(`确认删除字卡“${card}”吗？`);
+
+  if (!shouldDelete) {
+    return;
+  }
+
+  const cards = settings.customCategories[categoryName];
+
+  if (!Array.isArray(cards)) {
+    return;
+  }
+
+  settings.customCategories[categoryName] = cards.filter(
+    (item) => item !== card
+  );
+
+  saveCurrentSettings();
+  renderAll();
+}
+
 function importCards(event) {
   event.preventDefault();
 
   const categoryName = importCategorySelect.value;
-  const rawText = importTextarea.value;
 
   if (!categoryName || !settings.customCategories[categoryName]) {
-    importResult.textContent = "请先选择一个有效的自定义分类。";
+    importResult.textContent = "请先选择有效的自定义分类。";
     return;
   }
 
-  const existingCards = getAllCardValues();
-
-  const lines = rawText
+  const inputCards = importTextarea.value
     .split(/\r?\n/)
     .map((line) => line.trim())
     .filter(Boolean);
 
-  const uniqueIncomingCards = [
-    ...new Set(lines)
-  ];
+  const uniqueInputCards = [...new Set(inputCards)];
+  const existingCards = getAllCards();
 
-  const acceptedCards = uniqueIncomingCards.filter(
+  const acceptedCards = uniqueInputCards.filter(
     (card) => !existingCards.has(card)
   );
 
   if (!acceptedCards.length) {
-    importResult.textContent = lines.length
+    importResult.textContent = inputCards.length
       ? "没有新增内容：输入的字卡均已存在或重复。"
       : "没有检测到可导入的字卡内容。";
 
@@ -392,9 +524,12 @@ function importCards(event) {
   renderAll();
 
   importTextarea.value = "";
+
+  const skippedCount = Math.max(0, inputCards.length - acceptedCards.length);
+
   importResult.textContent =
-    `已成功导入 ${acceptedCards.length} 张字卡；` +
-    `跳过 ${Math.max(0, lines.length - acceptedCards.length)} 行重复或无效内容。`;
+    `成功导入 ${acceptedCards.length} 张字卡；` +
+    `跳过 ${skippedCount} 行重复或无效内容。`;
 }
 
 function initialize() {
@@ -440,24 +575,50 @@ function initialize() {
   openImportButton.addEventListener("click", openImportDialog);
 
   categoryForm.addEventListener("submit", createOrRenameCategory);
+  cardForm.addEventListener("submit", saveEditedCard);
   importForm.addEventListener("submit", importCards);
 
   customCategoryList.addEventListener("click", (event) => {
     const renameButton = event.target.closest("[data-rename-category]");
-    const deleteButton = event.target.closest("[data-delete-category]");
+    const deleteCategoryButton = event.target.closest("[data-delete-category]");
+    const editCardButton = event.target.closest("[data-edit-card-category]");
+    const deleteCardButton = event.target.closest("[data-delete-card-category]");
 
     if (renameButton) {
       openCategoryDialog(renameButton.dataset.renameCategory);
+      return;
     }
 
-    if (deleteButton) {
-      deleteCategory(deleteButton.dataset.deleteCategory);
+    if (deleteCategoryButton) {
+      deleteCategory(deleteCategoryButton.dataset.deleteCategory);
+      return;
+    }
+
+    if (editCardButton) {
+      openCardDialog(
+        editCardButton.dataset.editCardCategory,
+        editCardButton.dataset.editCardValue
+      );
+      return;
+    }
+
+    if (deleteCardButton) {
+      deleteCard(
+        deleteCardButton.dataset.deleteCardCategory,
+        deleteCardButton.dataset.deleteCardValue
+      );
     }
   });
 
   categoryDialogLayer.addEventListener("click", (event) => {
     if (event.target.dataset.closeCategoryDialog === "true") {
       closeCategoryDialog();
+    }
+  });
+
+  cardDialogLayer.addEventListener("click", (event) => {
+    if (event.target.dataset.closeCardDialog === "true") {
+      closeCardDialog();
     }
   });
 
