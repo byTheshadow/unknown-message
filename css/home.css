@@ -1,0 +1,263 @@
+.home-screen {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  min-height: 100svh;
+  overflow: hidden;
+  padding:
+    max(32px, env(safe-area-inset-top))
+    max(24px, env(safe-area-inset-right))
+    max(28px, env(safe-area-inset-bottom))
+    max(24px, env(safe-area-inset-left));
+  background:
+    radial-gradient(
+      circle at 50% 38%,
+      rgba(255, 255, 255, 0.96) 0%,
+      rgba(242, 242, 239, 0.9) 45%,
+      rgba(226, 226, 222, 0.98) 100%
+    );
+}
+
+.home-background-glow {
+  position: absolute;
+  top: 22%;
+  left: 50%;
+  width: min(90vw, 600px);
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.7);
+  filter: blur(72px);
+  pointer-events: none;
+  transform: translateX(-50%);
+}
+
+.home-header,
+.home-main,
+.home-footer {
+  position: relative;
+  z-index: 2;
+}
+
+.home-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  width: 100%;
+  max-width: 680px;
+  margin: 0 auto;
+}
+
+.brand-kicker,
+.brand-index,
+.home-overline,
+.entry-content small,
+.entry-number,
+.home-footer {
+  font-family: var(--font-mono);
+  letter-spacing: 0.13em;
+}
+
+.brand-kicker {
+  display: block;
+  color: var(--ink-muted);
+  font-size: 9px;
+}
+
+.brand-lockup h1 {
+  margin: 10px 0 0;
+  font-size: clamp(28px, 8vw, 46px);
+  font-weight: 500;
+  letter-spacing: 0.15em;
+  line-height: 1;
+}
+
+.brand-index {
+  padding-top: 2px;
+  color: var(--ink-muted);
+  font-size: 9px;
+}
+
+.home-main {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  justify-content: center;
+  width: 100%;
+  max-width: 680px;
+  margin: 0 auto;
+  padding: 60px 0;
+}
+
+.home-intro {
+  margin-bottom: 30px;
+}
+
+.home-overline {
+  margin: 0;
+  color: var(--ink-muted);
+  font-size: 9px;
+}
+
+.home-description {
+  margin: 13px 0 0;
+  color: var(--ink-soft);
+  font-size: 14px;
+  letter-spacing: 0.08em;
+}
+
+.home-navigation {
+  display: grid;
+  gap: 12px;
+}
+
+.home-entry {
+  position: relative;
+  display: flex;
+  align-items: center;
+  min-height: 96px;
+  overflow: hidden;
+  padding: 22px 20px;
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.34);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.7),
+    0 16px 40px rgba(17, 17, 17, 0.035);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  transition:
+    border-color 0.35s ease,
+    background 0.35s ease,
+    transform 0.35s ease,
+    box-shadow 0.35s ease;
+}
+
+.home-entry::before {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 2px;
+  content: "";
+  background: var(--ink);
+  opacity: 0;
+  transform: scaleY(0);
+  transition:
+    opacity 0.35s ease,
+    transform 0.35s ease;
+}
+
+.home-entry:hover,
+.home-entry:focus-visible {
+  border-color: var(--line-strong);
+  background: rgba(255, 255, 255, 0.68);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.9),
+    0 20px 48px rgba(17, 17, 17, 0.08);
+  transform: translateY(-3px);
+  outline: none;
+}
+
+.home-entry:hover::before,
+.home-entry:focus-visible::before {
+  opacity: 1;
+  transform: scaleY(1);
+}
+
+.entry-number {
+  width: 42px;
+  color: var(--ink-muted);
+  font-size: 9px;
+}
+
+.entry-content {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 9px;
+}
+
+.entry-content strong {
+  font-size: 20px;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+}
+
+.entry-content small {
+  color: var(--ink-muted);
+  font-size: 8px;
+}
+
+.entry-arrow {
+  display: grid;
+  width: 36px;
+  height: 36px;
+  place-items: center;
+  border: 1px solid var(--line);
+  border-radius: 50%;
+  color: var(--ink-soft);
+  transition:
+    color 0.35s ease,
+    background 0.35s ease,
+    transform 0.35s ease;
+}
+
+.entry-arrow svg {
+  width: 18px;
+  height: 18px;
+}
+
+.home-entry:hover .entry-arrow,
+.home-entry:focus-visible .entry-arrow {
+  color: var(--paper);
+  background: var(--ink);
+  transform: translateX(3px);
+}
+
+.home-footer {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  max-width: 680px;
+  margin: 0 auto;
+  color: var(--ink-muted);
+  font-size: 8px;
+}
+
+@media (max-width: 480px) {
+  .home-screen {
+    padding-right: 20px;
+    padding-left: 20px;
+  }
+
+  .brand-lockup h1 {
+    font-size: 30px;
+  }
+
+  .home-main {
+    padding-top: 46px;
+    padding-bottom: 46px;
+  }
+
+  .home-description {
+    font-size: 13px;
+  }
+
+  .home-entry {
+    min-height: 88px;
+    padding: 19px 16px;
+  }
+
+  .entry-number {
+    width: 34px;
+  }
+
+  .entry-content strong {
+    font-size: 18px;
+  }
+
+  .home-footer {
+    gap: 20px;
+    font-size: 7px;
+  }
+}
