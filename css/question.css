@@ -273,8 +273,10 @@
   display: flex;
   flex-direction: column;
   width: 100%;
-  animation: message-enter 0.54s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+  transform-origin: center bottom;
+  animation: message-float-in 0.72s cubic-bezier(0.18, 0.78, 0.18, 1) both;
 }
+
 
 .message-block.is-question {
   align-items: flex-end;
@@ -345,6 +347,11 @@
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
 }
+.is-response .received-message-card {
+  transform-origin: left bottom;
+  animation: received-float-surface 0.86s cubic-bezier(0.18, 0.78, 0.18, 1) both;
+}
+
 
 .received-card-header,
 .received-card-footer {
@@ -700,8 +707,9 @@
 /* 回讯显现动画 */
 
 .is-receiving .received-message-card {
-  animation: received-card-arrival 1.05s cubic-bezier(0.18, 0.78, 0.18, 1) both;
+  animation: received-card-arrival 1.12s cubic-bezier(0.18, 0.78, 0.18, 1) both;
 }
+
 
 .is-receiving .received-card-content {
   animation: received-content-arrival 0.75s ease 0.36s both;
@@ -942,7 +950,7 @@
 }
 
 .question-page.is-waiting .composer-panel {
-  opacity: 0.54;
+  display: none;
 }
 
 /* 导出弹窗 */
@@ -1125,17 +1133,25 @@
   }
 }
 
-@keyframes message-enter {
-  from {
+@keyframes message-float-in {
+  0% {
     opacity: 0;
-    transform: translateY(12px);
+    filter: blur(10px);
+    transform: translateY(22px) scale(0.982);
   }
 
-  to {
+  42% {
+    opacity: 0.72;
+    filter: blur(3px);
+  }
+
+  100% {
     opacity: 1;
-    transform: translateY(0);
+    filter: blur(0);
+    transform: translateY(0) scale(1);
   }
 }
+
 
 @keyframes received-card-arrival {
   0% {
@@ -1155,6 +1171,33 @@
     transform: translateY(0) scale(1);
   }
 }
+
+@keyframes received-float-surface {
+  0% {
+    opacity: 0;
+    filter: blur(12px);
+    transform: translateY(26px) scale(0.965);
+    box-shadow:
+      0 4px 14px rgba(17, 17, 17, 0),
+      inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  }
+
+  48% {
+    opacity: 0.74;
+    filter: blur(3px);
+    transform: translateY(7px) scale(0.99);
+  }
+
+  100% {
+    opacity: 1;
+    filter: blur(0);
+    transform: translateY(0) scale(1);
+    box-shadow:
+      0 18px 44px rgba(17, 17, 17, 0.06),
+      inset 0 1px 0 rgba(255, 255, 255, 0.62);
+  }
+}
+
 
 @keyframes received-content-arrival {
   from {

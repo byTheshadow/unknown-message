@@ -36,7 +36,8 @@ const downloadButton = document.querySelector("#downloadButton");
 
 const MIN_SIGNAL_CHECK_DELAY = 800;
 const MAX_SIGNAL_CHECK_DELAY = 5200;
-const SIGNAL_ARRIVAL_CHANCE = 16;
+const RECIPIENT_DRAFT_KEY = "unknown-message.recipient-draft";
+
 
 const WAITING_LINES = [
   "讯息已离开此刻",
@@ -135,6 +136,39 @@ function formatRemainingTime(milliseconds) {
 
   return `${minutes}:${seconds}`;
 }
+function getRecipientDraft() {
+  try {
+    return localStorage.getItem(RECIPIENT_DRAFT_KEY) || "";
+  } catch {
+    return "";
+  }
+}
+
+function saveRecipientDraft(value) {
+  try {
+    const safeValue = String(value || "").trim();
+
+    if (safeValue) {
+      localStorage.setItem(RECIPIENT_DRAFT_KEY, safeValue);
+    } else {
+      localStorage.removeItem(RECIPIENT_DRAFT_KEY);
+    }
+  } catch {
+    /*
+      小红书沙箱中如 localStorage 暂不可用，忽略即可。
+      不影响核心传讯流程。
+    */
+  }
+}
+
+function restoreRecipientDraft() {
+  const draftValue = getRecipientDraft();
+
+  if (draftValue && !recipientInput.value.trim()) {
+    recipientInput.value = draftValue;
+  }
+}
+
 
 function scrollConversationToBottom(smooth = true) {
   window.requestAnimationFrame(() => {
@@ -708,10 +742,13 @@ function submitQuestion(event) {
     发送时只产生空白 session：
     不抽字卡、不选塔罗、不选礼物、不定回复类型、不定到达时间。
   */
-  const session = createSession(recipient, question);
+  saveRecipientDraft(recipient);
 
-  conversation.messages.push(createQuestionMessage(session));
-  conversation.activeSession = session;
+const session = createSession(recipient, question);
+
+conversation.messages.push(createQuestionMessage(session));
+conversation.activeSession = session;
+
 
   saveCurrentConversation();
 
@@ -993,13 +1030,19 @@ function closeExport() {
 }
 
 function initialize() {
+  restoreRecipientDraft();
   updateWaitTimeLabel();
   updateCharacterCount();
   renderConversation();
   scheduleActiveSession();
 
+  recipientInput.addEventListener("input", () => {
+    saveRecipientDraft(recipientInput.value);
+  });
+
   questionInput.addEventListener("input", updateCharacterCount);
   questionForm.addEventListener("submit", submitQuestion);
+
 
   clearHistoryButton.addEventListener("click", clearHistory);
 
