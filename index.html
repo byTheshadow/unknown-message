@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
@@ -12,14 +13,19 @@
 
   <title>未读信号 · UNKNOWN-MESSAGE</title>
 
+  <!-- 引入所有页面的 CSS 样式文件（统一在 ./css/ 路径下） -->
   <link rel="stylesheet" href="./css/base.css" />
   <link rel="stylesheet" href="./css/loading.css" />
   <link rel="stylesheet" href="./css/home.css" />
+  <link rel="stylesheet" href="./css/question.css" />
+  <link rel="stylesheet" href="./css/question-layout.css" />
+  <link rel="stylesheet" href="./css/settings.css" />
 </head>
 
 <body>
   <div class="app-shell">
-    <!-- 加载页 -->
+    
+    <!-- 0. 开场加载页 -->
     <section
       class="loading-screen"
       id="loadingScreen"
@@ -92,130 +98,803 @@
       </footer>
     </section>
 
-<!-- 主入口 -->
-<section class="home-screen is-hidden" id="homeScreen">
-  <div class="home-background-glow" aria-hidden="true"></div>
-  <div class="home-grain" aria-hidden="true"></div>
+    <!-- 1. 首页视图 -->
+    <section class="home-screen is-hidden" id="homeScreen">
+      <div class="home-background-glow" aria-hidden="true"></div>
+      <div class="home-grain" aria-hidden="true"></div>
 
-  <div class="home-rule home-rule-top" aria-hidden="true"></div>
-  <div class="home-rule home-rule-side" aria-hidden="true"></div>
+      <div class="home-rule home-rule-top" aria-hidden="true"></div>
+      <div class="home-rule home-rule-side" aria-hidden="true"></div>
 
-  <header class="home-header">
-    <div class="brand-lockup">
-      <span class="brand-kicker">UNKNOWN-MESSAGE</span>
-      <h1>未读<br />信号</h1>
-    </div>
-
-    <div class="home-edition">
-      <span>PRIVATE EDITION</span>
-      <strong>NO. 001</strong>
-      <span>LOCAL / OFFLINE</span>
-    </div>
-  </header>
-
-  <main class="home-main">
-    <section class="home-cover-copy" aria-label="应用介绍">
-      <p class="home-overline">A PLACE FOR THE UNSAID</p>
-
-      <div class="home-title-row">
-        <span class="home-title-number">01</span>
-
-        <div>
-          <h2>有些话，<br />适合留给等待。</h2>
-          <p class="home-description">
-            写下一条问题，让它穿过一段安静的时间，
-            等待一段未被预先写好的回讯。
-          </p>
+      <header class="home-header">
+        <div class="brand-lockup">
+          <span class="brand-kicker">UNKNOWN-MESSAGE</span>
+          <h1>未读<br />信号</h1>
         </div>
-      </div>
 
-      <div class="home-caption-row">
-        <span>ISSUE / A QUIET TRANSMISSION</span>
-        <span>ALL SIGNALS ARE RANDOM</span>
-      </div>
+        <div class="home-edition">
+          <span>PRIVATE EDITION</span>
+          <strong>NO. 001</strong>
+          <span>LOCAL / OFFLINE</span>
+        </div>
+      </header>
+
+      <main class="home-main">
+        <section class="home-cover-copy" aria-label="应用介绍">
+          <p class="home-overline">A PLACE FOR THE UNSAID</p>
+
+          <div class="home-title-row">
+            <span class="home-title-number">01</span>
+
+            <div>
+              <h2>有些话，<br />适合留给等待。</h2>
+              <p class="home-description">
+                写下一条问题，让它穿过一段安静的时间，
+                等待一段未被预先写好的回讯。
+              </p>
+            </div>
+          </div>
+
+          <div class="home-caption-row">
+            <span>ISSUE / A QUIET TRANSMISSION</span>
+            <span>ALL SIGNALS ARE RANDOM</span>
+          </div>
+        </section>
+
+        <nav class="home-navigation" aria-label="主导航">
+          <a
+            class="home-entry home-entry-primary"
+            id="btnToQuestion"
+            href="javascript:void(0)"
+          >
+            <span class="entry-number">01</span>
+
+            <span class="entry-content">
+              <small>OPEN A PRIVATE CHANNEL</small>
+              <strong>提问箱</strong>
+              <em>写下一件想被听见的事</em>
+            </span>
+
+            <span class="entry-arrow" aria-hidden="true">
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M5 12H19"
+                  stroke="currentColor"
+                  stroke-width="1.4"
+                  stroke-linecap="round"
+                />
+                <path
+                  d="M13 6L19 12L13 18"
+                  stroke="currentColor"
+                  stroke-width="1.4"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+              </svg>
+            </span>
+          </a>
+
+          <a
+            class="home-entry home-entry-secondary"
+            id="btnToSettings"
+            href="javascript:void(0)"
+          >
+            <span class="entry-number">02</span>
+
+            <span class="entry-content">
+              <small>ADJUST THE WINDOW</small>
+              <strong>设置</strong>
+              <em>调整等待与字卡的范围</em>
+            </span>
+
+            <span class="entry-arrow" aria-hidden="true">
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M5 12H19"
+                  stroke="currentColor"
+                  stroke-width="1.4"
+                  stroke-linecap="round"
+                />
+                <path
+                  d="M13 6L19 12L13 18"
+                  stroke="currentColor"
+                  stroke-width="1.4"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+              </svg>
+            </span>
+          </a>
+        </nav>
+      </main>
+
+      <footer class="home-footer">
+        <span>未读信号 / UNKNOWN-MESSAGE</span>
+        <span>NO NETWORK · NO PREWRITTEN REPLY</span>
+      </footer>
     </section>
 
-    <nav class="home-navigation" aria-label="主导航">
-      <a
-        class="home-entry home-entry-primary"
-        href="./pages/question.html"
-      >
-        <span class="entry-number">01</span>
+    <!-- 2. 提问箱视图 (默认隐藏 is-hidden) -->
+    <main class="question-page is-drawer-open is-hidden" id="questionPage">
+      <div class="question-grain" aria-hidden="true"></div>
+      <div class="question-ambient ambient-one" aria-hidden="true"></div>
+      <div class="question-ambient ambient-two" aria-hidden="true"></div>
 
-        <span class="entry-content">
-          <small>OPEN A PRIVATE CHANNEL</small>
+      <header class="question-header">
+        <a class="back-button" id="btnQuestionBack" href="javascript:void(0)" aria-label="返回主页">
+          <svg
+            viewBox="0 0 24 24"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+            aria-hidden="true"
+          >
+            <path
+              d="M19 12H5"
+              stroke="currentColor"
+              stroke-width="1.4"
+              stroke-linecap="round"
+            />
+            <path
+              d="M11 6L5 12L11 18"
+              stroke="currentColor"
+              stroke-width="1.4"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+          </svg>
+        </a>
+
+        <div class="question-brand">
+          <span>UNKNOWN-MESSAGE</span>
           <strong>提问箱</strong>
-          <em>写下一件想被听见的事</em>
-        </span>
+        </div>
 
-        <span class="entry-arrow" aria-hidden="true">
+        <button
+          class="header-icon-button"
+          id="exportButton"
+          type="button"
+          aria-label="生成对话长图"
+        >
           <svg
             viewBox="0 0 24 24"
             fill="none"
             xmlns="http://www.w3.org/2000/svg"
+            aria-hidden="true"
+          >
+            <rect
+              x="4"
+              y="4"
+              width="16"
+              height="16"
+              rx="2"
+              stroke="currentColor"
+              stroke-width="1.4"
+            />
+            <path
+              d="M8 15L10.7 12.3L12.8 14.4L15.1 11.8L18 15"
+              stroke="currentColor"
+              stroke-width="1.4"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+            <circle cx="9" cy="9" r="1.2" fill="currentColor" />
+          </svg>
+        </button>
+      </header>
+
+      <section class="session-meta" aria-label="当前传输设置">
+        <div class="session-meta-line">
+          <span class="meta-dot"></span>
+          <span>MESSAGE INTERFACE / ACTIVE</span>
+        </div>
+
+        <button class="wait-setting-link" id="waitSettingLink" type="button">
+          <span>回复上限</span>
+          <strong id="waitTimeLabel">05:00</strong>
+        </button>
+      </section>
+
+      <section class="conversation-area" id="conversationArea" aria-live="polite">
+        <div class="empty-conversation" id="emptyConversation">
+          <div class="empty-orbit empty-orbit-one" aria-hidden="true"></div>
+          <div class="empty-orbit empty-orbit-two" aria-hidden="true"></div>
+
+          <p class="empty-eyebrow">A QUIET PLACE FOR ONE QUESTION</p>
+          <h1>让一个问题停在这里</h1>
+          <p class="empty-description">
+            写下它，随后留出一段不被催促的空白。
+          </p>
+        </div>
+
+        <div class="message-list" id="messageList"></div>
+      </section>
+
+      <section class="composer-panel" id="composerPanel" aria-label="提问终端">
+        <div class="composer-drawer-top">
+          <div class="composer-drawer-layer composer-drawer-layer-one" aria-hidden="true"></div>
+          <div class="composer-drawer-layer composer-drawer-layer-two" aria-hidden="true"></div>
+
+          <button
+            class="drawer-toggle"
+            id="drawerToggle"
+            type="button"
+            aria-expanded="true"
+            aria-controls="questionForm"
+          >
+            <span class="drawer-handle" aria-hidden="true"></span>
+            <span class="drawer-toggle-copy">
+              <span>QUESTION TERMINAL</span>
+              <strong>提问抽屉</strong>
+            </span>
+            <span class="drawer-toggle-state">收束</span>
+          </button>
+        </div>
+
+        <div class="composer-drawer-content">
+          <div class="composer-intro">
+            <span class="composer-index">01 / QUESTION TERMINAL</span>
+            <strong>写下想被听见的事</strong>
+            <p>这不是即时对话。每一次开启，都会留下一段独立的等待。</p>
+          </div>
+
+          <form class="question-form" id="questionForm">
+            <label class="field-group field-recipient">
+              <span class="field-label">提问对象 / TO</span>
+              <input
+                id="recipientInput"
+                name="recipient"
+                type="text"
+                maxlength="24"
+                autocomplete="off"
+                placeholder="姓名或一个称呼"
+              />
+            </label>
+
+            <label class="field-group field-question">
+              <span class="field-label">你的问题 / QUESTION</span>
+              <textarea
+                id="questionInput"
+                name="question"
+                rows="4"
+                maxlength="160"
+                placeholder="把此刻无法确认的事，写在这里"
+              ></textarea>
+            </label>
+
+            <div
+              class="response-category-picker"
+              id="responseCategoryPicker"
+              aria-labelledby="responseCategoryTitle"
+            >
+              <div class="response-category-picker-header">
+                <div>
+                  <span id="responseCategoryTitle">本次回应启用分类</span>
+                  <small>仅作用于这一次发送</small>
+                </div>
+
+                <button
+                  class="category-select-all-button"
+                  id="selectAllCategoriesButton"
+                  type="button"
+                >
+                  全选
+                </button>
+              </div>
+
+              <div
+                class="response-category-options"
+                id="responseCategoryOptions"
+                aria-live="polite"
+              ></div>
+
+              <p
+                class="response-category-warning is-hidden"
+                id="responseCategoryWarning"
+              >
+                请至少保留一个字卡分类。
+              </p>
+            </div>
+
+            <div class="form-bottom">
+              <span class="character-count" id="characterCount">0 / 160</span>
+
+              <button class="send-button" id="sendButton" type="submit">
+                <span>OPEN CHANNEL</span>
+                <svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                  aria-hidden="true"
+                >
+                  <path
+                    d="M5 12H19"
+                    stroke="currentColor"
+                    stroke-width="1.4"
+                    stroke-linecap="round"
+                  />
+                  <path
+                    d="M13 6L19 12L13 18"
+                    stroke="currentColor"
+                    stroke-width="1.4"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  />
+                </svg>
+              </button>
+            </div>
+          </form>
+
+          <div class="record-notice">
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+              aria-hidden="true"
+            >
+              <path
+                d="M12 7V12"
+                stroke="currentColor"
+                stroke-width="1.4"
+                stroke-linecap="round"
+              />
+              <circle cx="12" cy="16" r="0.8" fill="currentColor" />
+              <path
+                d="M10.3 4.2L3.9 15.2C3.1 16.6 4.1 18.3 5.7 18.3H18.3C19.9 18.3 20.9 16.6 20.1 15.2L13.7 4.2C12.9 2.9 11.1 2.9 10.3 4.2Z"
+                stroke="currentColor"
+                stroke-width="1.4"
+                stroke-linejoin="round"
+              />
+            </svg>
+
+            <span>记录仅暂存于当前设备。</span>
+
+            <button id="clearHistoryButton" type="button">
+              清除记录
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- 导出弹窗 -->
+      <div class="export-layer is-hidden" id="exportLayer" role="dialog" aria-modal="true">
+        <div class="export-backdrop" data-close-export="true"></div>
+
+        <section class="export-dialog" aria-label="对话长图">
+          <header class="export-dialog-header">
+            <div>
+              <span>MESSAGE ARCHIVE</span>
+              <strong>对话长图已生成</strong>
+            </div>
+
+            <button
+              class="header-icon-button"
+              id="closeExportButton"
+              type="button"
+              aria-label="关闭长图预览"
+            >
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+                aria-hidden="true"
+              >
+                <path
+                  d="M6 6L18 18M18 6L6 18"
+                  stroke="currentColor"
+                  stroke-width="1.4"
+                  stroke-linecap="round"
+                />
+              </svg>
+            </button>
+          </header>
+
+          <div class="export-image-wrap">
+            <img id="exportImage" alt="未读信号对话记录长图" />
+          </div>
+
+          <p class="export-help">
+            长按图片保存；桌面设备可使用下载按钮保存。
+          </p>
+
+          <a class="download-button" id="downloadButton" download="unknown-message-record.png">
+            下载长图
+          </a>
+        </section>
+      </div>
+    </main>
+
+    <!-- 3. 设置视图 (默认隐藏 is-hidden) -->
+    <main class="settings-page is-hidden" id="settingsPage">
+      <div class="settings-grain" aria-hidden="true"></div>
+      <div class="settings-ambient settings-ambient-one" aria-hidden="true"></div>
+      <div class="settings-ambient settings-ambient-two" aria-hidden="true"></div>
+
+      <header class="settings-header">
+        <a class="settings-back-button" id="btnSettingsBack" href="javascript:void(0)" aria-label="返回主页">
+          <svg
+            viewBox="0 0 24 24"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+            aria-hidden="true"
           >
             <path
-              d="M5 12H19"
+              d="M19 12H5"
               stroke="currentColor"
               stroke-width="1.4"
               stroke-linecap="round"
             />
             <path
-              d="M13 6L19 12L13 18"
+              d="M11 6L5 12L11 18"
               stroke="currentColor"
               stroke-width="1.4"
               stroke-linecap="round"
               stroke-linejoin="round"
             />
           </svg>
-        </span>
-      </a>
+        </a>
 
-      <a
-        class="home-entry home-entry-secondary"
-        href="./pages/settings.html"
-      >
-        <span class="entry-number">02</span>
-
-        <span class="entry-content">
-          <small>ADJUST THE WINDOW</small>
+        <div class="settings-brand">
+          <span>UNKNOWN-MESSAGE</span>
           <strong>设置</strong>
-          <em>调整等待与字卡的范围</em>
-        </span>
+        </div>
 
-        <span class="entry-arrow" aria-hidden="true">
-          <svg
-            viewBox="0 0 24 24"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              d="M5 12H19"
-              stroke="currentColor"
-              stroke-width="1.4"
-              stroke-linecap="round"
-            />
-            <path
-              d="M13 6L19 12L13 18"
-              stroke="currentColor"
-              stroke-width="1.4"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            />
-          </svg>
-        </span>
-      </a>
-    </nav>
-  </main>
+        <span class="settings-index">02</span>
+      </header>
 
-  <footer class="home-footer">
-    <span>未读信号 / UNKNOWN-MESSAGE</span>
-    <span>NO NETWORK · NO PREWRITTEN REPLY</span>
-  </footer>
-</section>
+      <section class="settings-intro">
+        <span>CONFIGURATION / LOCAL ONLY</span>
+        <h1>调整回应抵达前的空白</h1>
+        <p>设置仅保留在当前设备，不会上传或发送至任何地方。</p>
+      </section>
+
+      <div class="settings-content">
+        <section class="settings-section" aria-labelledby="waitSectionTitle">
+          <div class="section-heading">
+            <div>
+              <span>01 / RESPONSE LIMIT</span>
+              <h2 id="waitSectionTitle">回复上限</h2>
+            </div>
+
+            <output class="wait-output" id="waitSecondsOutput">05:00</output>
+          </div>
+
+          <div class="wait-control">
+            <input
+              id="waitSecondsRange"
+              type="range"
+              min="30"
+              max="900"
+              step="30"
+              value="300"
+              aria-label="回复上限时长"
+            />
+
+            <div class="range-labels" aria-hidden="true">
+              <span>00:30</span>
+              <span>15:00</span>
+            </div>
+          </div>
+
+          <p class="section-help">
+            每次发送后，系统会在此时间范围内保持等待；到达上限仍无回应时才触发默认回音。
+          </p>
+        </section>
+
+        <section class="settings-section" aria-labelledby="categorySectionTitle">
+          <div class="section-heading">
+            <div>
+              <span>02 / CARD CATEGORIES</span>
+              <h2 id="categorySectionTitle">默认启用分类</h2>
+            </div>
+
+            <span class="section-count" id="activeCategoryCount">0 已启用</span>
+          </div>
+
+          <p class="section-help">
+            这里的状态会作为下次进入提问箱时的默认选择；每次发送前仍可临时调整。
+          </p>
+
+          <div class="category-toggle-list" id="categoryToggleList"></div>
+        </section>
+
+        <section class="settings-section" aria-labelledby="customSectionTitle">
+          <div class="section-heading section-heading-stack">
+            <div>
+              <span>03 / CUSTOM CARD LIBRARY</span>
+              <h2 id="customSectionTitle">自定义字卡</h2>
+            </div>
+
+            <div class="section-actions">
+              <button class="outline-button" id="createCategoryButton" type="button">
+                <span>新建分类</span>
+              </button>
+
+              <button class="solid-button" id="openImportButton" type="button">
+                <span>批量导入</span>
+              </button>
+            </div>
+          </div>
+
+          <p class="section-help">
+            每个分类可以收纳多张字卡。批量导入时，一行视为一张字卡，重复内容将自动跳过。
+          </p>
+
+          <div class="custom-category-list" id="customCategoryList"></div>
+        </section>
+      </div>
+
+      <footer class="settings-footer">
+        <span>LOCAL CONFIGURATION / OFFLINE</span>
+        <strong>by shadow</strong>
+      </footer>
+
+      <!-- 设置相关弹窗 -->
+      <div
+        class="settings-layer is-hidden"
+        id="categoryDialogLayer"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="categoryDialogTitle"
+      >
+        <div class="settings-backdrop" data-close-category-dialog="true"></div>
+
+        <section class="settings-dialog">
+          <header class="dialog-header">
+            <div>
+              <span id="categoryDialogKicker">CREATE CATEGORY</span>
+              <strong id="categoryDialogTitle">新建分类</strong>
+            </div>
+
+            <button
+              class="dialog-close-button"
+              type="button"
+              data-close-category-dialog="true"
+              aria-label="关闭"
+            >
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+                aria-hidden="true"
+              >
+                <path
+                  d="M6 6L18 18M18 6L6 18"
+                  stroke="currentColor"
+                  stroke-width="1.4"
+                  stroke-linecap="round"
+                />
+              </svg>
+            </button>
+          </header>
+
+          <form id="categoryForm">
+            <label class="dialog-field">
+              <span>分类名称</span>
+              <input
+                id="categoryNameInput"
+                type="text"
+                maxlength="20"
+                autocomplete="off"
+                placeholder="例如：夜间片段"
+              />
+            </label>
+
+            <p class="dialog-note" id="categoryDialogNote">
+              分类名称不能与现有分类重复。
+            </p>
+
+            <div class="dialog-actions">
+              <button
+                class="text-button"
+                type="button"
+                data-close-category-dialog="true"
+              >
+                取消
+              </button>
+
+              <button class="solid-button" type="submit">
+                确认保存
+              </button>
+            </div>
+          </form>
+        </section>
+      </div>
+
+      <div
+        class="settings-layer is-hidden"
+        id="importDialogLayer"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="importDialogTitle"
+      >
+        <div class="settings-backdrop" data-close-import-dialog="true"></div>
+
+        <section class="settings-dialog import-dialog">
+          <header class="dialog-header">
+            <div>
+              <span>BATCH IMPORT / TEXT ONLY</span>
+              <strong id="importDialogTitle">批量导入字卡</strong>
+            </div>
+
+            <button
+              class="dialog-close-button"
+              type="button"
+              data-close-import-dialog="true"
+              aria-label="关闭"
+            >
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+                aria-hidden="true"
+              >
+                <path
+                  d="M6 6L18 18M18 6L6 18"
+                  stroke="currentColor"
+                  stroke-width="1.4"
+                  stroke-linecap="round"
+                />
+              </svg>
+            </button>
+          </header>
+
+          <form id="importForm">
+            <label class="dialog-field">
+              <span>导入到分类</span>
+              <select id="importCategorySelect" aria-label="选择导入分类"></select>
+            </label>
+
+            <label class="dialog-field">
+              <span>字卡内容</span>
+              <textarea
+                id="importTextarea"
+                rows="9"
+                maxlength="4000"
+                placeholder="一行一张字卡&#10;例如：&#10;雨停以后再出发&#10;那盏灯还亮着"
+              ></textarea>
+            </label>
+
+            <p class="dialog-note">
+              空行会被跳过；已存在于内置字卡或自定义字卡中的内容不会重复导入。
+            </p>
+
+            <p class="import-result" id="importResult" aria-live="polite"></p>
+
+            <div class="dialog-actions">
+              <button
+                class="text-button"
+                type="button"
+                data-close-import-dialog="true"
+              >
+                取消
+              </button>
+
+              <button class="solid-button" type="submit">
+                开始导入
+              </button>
+            </div>
+          </form>
+        </section>
+      </div>
+
+      <div
+        class="settings-layer is-hidden"
+        id="cardDialogLayer"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="cardDialogTitle"
+      >
+        <div class="settings-backdrop" data-close-card-dialog="true"></div>
+
+        <section class="settings-dialog card-edit-dialog">
+          <header class="dialog-header">
+            <div>
+              <span>EDIT CARD / LOCAL ONLY</span>
+              <strong id="cardDialogTitle">编辑字卡</strong>
+            </div>
+
+            <button
+              class="dialog-close-button"
+              type="button"
+              data-close-card-dialog="true"
+              aria-label="关闭编辑字卡弹窗"
+            >
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+                aria-hidden="true"
+              >
+                <path
+                  d="M6 6L18 18M18 6L6 18"
+                  stroke="currentColor"
+                  stroke-width="1.4"
+                  stroke-linecap="round"
+                />
+              </svg>
+            </button>
+          </header>
+
+          <form id="cardForm">
+            <label class="dialog-field">
+              <span>字卡内容</span>
+
+              <textarea
+                id="cardContentInput"
+                rows="4"
+                maxlength="160"
+                placeholder="写下这张字卡"
+              ></textarea>
+            </label>
+
+            <p class="dialog-note" id="cardDialogNote">
+              保存时会自动清理首尾空格；内容不能与已有内置或自定义字卡重复。
+            </p>
+
+            <div class="dialog-actions">
+              <button
+                class="text-button"
+                type="button"
+                data-close-card-dialog="true"
+              >
+                取消
+              </button>
+
+              <button class="solid-button" type="submit">
+                保存修改
+              </button>
+            </div>
+          </form>
+        </section>
+      </div>
+    </main>
 
   </div>
 
+  <!-- 按依赖顺序引入所有 JS 文件（统一使用 ./js/ 路径） -->
+  <script src="./js/data/cards.js"></script>
+  <script src="./js/utils/storage.js"></script>
+  <script type="module" src="./js/question.js"></script>
+  <script type="module" src="./js/settings.js"></script>
   <script src="./js/app.js"></script>
+
+  <!-- 抽屉微动效逻辑 -->
+  <script>
+    (() => {
+      const questionPage = document.getElementById("questionPage");
+      const drawerToggle = document.getElementById("drawerToggle");
+
+      if (!questionPage || !drawerToggle) {
+        return;
+      }
+
+      const updateDrawer = () => {
+        const isOpen = questionPage.classList.contains("is-drawer-open");
+        drawerToggle.setAttribute("aria-expanded", String(isOpen));
+        const state = drawerToggle.querySelector(".drawer-toggle-state");
+        if (state) {
+          state.textContent = isOpen ? "收束" : "展开";
+        }
+      };
+
+      drawerToggle.addEventListener("click", () => {
+        if (questionPage.classList.contains("is-waiting")) {
+          return;
+        }
+        questionPage.classList.toggle("is-drawer-open");
+        updateDrawer();
+      });
+
+      updateDrawer();
+    })();
+  </script>
 </body>
 </html>
