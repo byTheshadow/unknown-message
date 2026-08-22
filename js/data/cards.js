@@ -1,53 +1,53 @@
-export const cardCategories = {
-  代词: [
-    "我",
-    "你",
-    "这封回复",
-    "此刻",
-    "远处的声音",
-    "未读的念头",
-    "一段停留",
-    "今天的空气"
-  ],
+/*
+  塔罗内容由其他 AI 填充。
+  必须全部使用本地内联 SVG，不允许外部 URL、图片或字体资源。
+*/
+export const tarotCards = [
+  /*
+  {
+    id: "the-fool",
+    name: "愚人",
+    englishName: "THE FOOL",
+    meaning: "一条尚未命名的路，正从脚下展开。",
+    svg: `
+      <svg
+        viewBox="0 0 64 64"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="1.4"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <rect x="7" y="5" width="50" height="54" rx="2"></rect>
+      </svg>
+    `
+  }
+  */
+];
 
-  动作: [
-    "正在靠近",
-    "仍然记得",
-    "想停留一会",
-    "没有离开",
-    "会慢慢回答",
-    "正在整理",
-    "刚好路过",
-    "愿意听见"
-  ],
-
-  时间: [
-    "在此刻",
-    "在很安静的时候",
-    "在下一次天亮之前",
-    "在风停下以后",
-    "在这段等待里",
-    "在没有说出口的地方",
-    "在今天",
-    "在你看见它的时候"
-  ],
-
-  物品: [
-    "一张折起的纸",
-    "一杯还温热的饮料",
-    "一枚旧钥匙",
-    "一段没有寄出的录音",
-    "一盏微弱的灯",
-    "一片被保留的叶子",
-    "一张空白车票",
-    "一本翻到中间的书"
-  ]
-};
-
-export const fallbackCards = [
-  "信号暂未抵达，但问题已被保留。",
-  "这一次没有收到完整回应。",
-  "回音已存档，等待下一次发送。",
-  "线路仍在开启，答案稍后会抵达。",
-  "暂时没有新的内容，请保留这条问题。"
+/*
+  礼物内容由其他 AI 填充。
+  礼物不要写固定赠言；赠言只会在信号抵达时从字卡池随机生成。
+*/
+export const giftItems = [
+  /*
+  {
+    id: "warm-coffee",
+    name: "一杯温热的咖啡",
+    svg: `
+      <svg
+        viewBox="0 0 64 64"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="1.4"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path d="..."></path>
+      </svg>
+    `
+  }
+  */
 ];

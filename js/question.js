@@ -1,4 +1,4 @@
-import { cardCategories, fallbackCards } from "./data/cards.js";
+import * as cardData from "./data/cards.js";
 import {
   clearConversation,
   getConversation,
@@ -6,6 +6,14 @@ import {
   saveConversation
 } from "./utils/storage.js";
 
+const {
+  cardCategories,
+  fallbackCards,
+  tarotCards = [],
+  giftItems = []
+} = cardData;
+
+const questionPage = document.querySelector("#questionPage");
 const conversationArea = document.querySelector("#conversationArea");
 const emptyConversation = document.querySelector("#emptyConversation");
 const messageList = document.querySelector("#messageList");
@@ -26,44 +34,36 @@ const exportImage = document.querySelector("#exportImage");
 const closeExportButton = document.querySelector("#closeExportButton");
 const downloadButton = document.querySelector("#downloadButton");
 
-/*
-  每一次信号检查之间的随机间隔：
-  0.8 秒 ～ 5.2 秒
-*/
 const MIN_SIGNAL_CHECK_DELAY = 800;
 const MAX_SIGNAL_CHECK_DELAY = 5200;
-
-/*
-  每次独立信号检查中，收到回应的随机机会。
-
-  这个数值不是“预设什么时候回复”：
-  - 不会在发送时决定未来结果；
-  - 每次检查都重新独立随机；
-  - 在真正收到前，没有任何普通回复内容存在；
-  - 即使连续多次未收到，下一次也不会被人为提高或降低概率。
-
-  后续如要调整等待体验，只调整此值即可。
-*/
 const SIGNAL_ARRIVAL_CHANCE = 16;
+
+const WAITING_LINES = [
+  "讯息已离开此刻",
+  "正在穿过安静的频段",
+  "远处仍有微弱回声",
+  "有些片段尚未显现",
+  "请让这段空白继续停留",
+  "传讯窗口仍然开启",
+  "有些回答正在路上",
+  "风经过时，线路依然安静",
+  "未命名的内容正在靠近",
+  "这一刻还没有结束"
+];
 
 let conversation = getConversation();
 
 let signalCheckTimer = null;
 let fallbackTimer = null;
 let pendingClockTimer = null;
+let receiveAnimationTimer = null;
 
-/*
-  使用浏览器安全随机数。
-
-  这里不用 Math.random()，而使用 crypto.getRandomValues()。
-  同时采用 rejection sampling，避免取模导致的微小分布偏差。
-*/
 function randomInteger(min, max) {
   const range = max - min + 1;
   const maxUint32 = 0x100000000;
   const limit = maxUint32 - (maxUint32 % range);
-
   const randomArray = new Uint32Array(1);
+
   let randomValue = 0;
 
   do {
@@ -75,7 +75,26 @@ function randomInteger(min, max) {
 }
 
 function chooseRandom(items) {
+  if (!Array.isArray(items) || !items.length) {
+    return null;
+  }
+
   return items[randomInteger(0, items.length - 1)];
+}
+
+function secureShuffle(items) {
+  const shuffled = [...items];
+
+  for (let index = shuffled.length - 1; index > 0; index -= 1) {
+    const targetIndex = randomInteger(0, index);
+
+    [shuffled[index], shuffled[targetIndex]] = [
+      shuffled[targetIndex],
+      shuffled[index]
+    ];
+  }
+
+  return shuffled;
 }
 
 function createId(prefix = "message") {
@@ -86,14 +105,18 @@ function createId(prefix = "message") {
   return `${prefix}-${randomPart}`;
 }
 
-function formatTime(timestamp) {
-  const date = new Date(timestamp);
+function escapeHtml(value) {
+  const element = document.createElement("div");
+  element.textContent = String(value ?? "");
+  return element.innerHTML;
+}
 
+function formatTime(timestamp) {
   return new Intl.DateTimeFormat("zh-CN", {
     hour: "2-digit",
     minute: "2-digit",
     hour12: false
-  }).format(date);
+  }).format(new Date(timestamp));
 }
 
 function formatWaitTime(seconds) {
@@ -107,7 +130,6 @@ function formatWaitTime(seconds) {
 function formatRemainingTime(milliseconds) {
   const safeMilliseconds = Math.max(0, milliseconds);
   const totalSeconds = Math.ceil(safeMilliseconds / 1000);
-
   const minutes = String(Math.floor(totalSeconds / 60)).padStart(2, "0");
   const seconds = String(totalSeconds % 60).padStart(2, "0");
 
@@ -125,10 +147,9 @@ function scrollConversationToBottom(smooth = true) {
 
 function getEnabledCards() {
   const settings = getSettings();
-  const activeCategories = settings.activeCategories;
 
-  const validCategories = Array.isArray(activeCategories)
-    ? activeCategories.filter((category) => cardCategories[category])
+  const validCategories = Array.isArray(settings.activeCategories)
+    ? settings.activeCategories.filter((category) => cardCategories[category])
     : [];
 
   const categoryNames = validCategories.length
@@ -139,70 +160,98 @@ function getEnabledCards() {
 }
 
 /*
-  仅在“普通回应真正抵达的当刻”调用。
+  不设定固定的 1~3、1~5 数量上限。
 
-  单张字卡、多张字卡均有可能。
-  抽取数量、具体字卡都在此时才独立随机产生。
+  信号抵达后，先从当前已启用的全部词条中随机决定数量，
+  再安全随机、无重复地抽取相应数量。
 
-  它不会在用户点击发送时执行，
-  不会在等待开始时执行，
-  不会提前将结果存入 localStorage。
+  因此数量只受用户实际开启的字卡池规模影响。
 */
-function createTextCardPayloadAtArrival() {
+function createRandomCardsAtArrival() {
   const enabledCards = getEnabledCards();
-  const cardAmount = randomInteger(1, 3);
-  const cards = [];
 
-  for (let index = 0; index < cardAmount; index += 1) {
-    cards.push(chooseRandom(enabledCards));
+  if (!enabledCards.length) {
+    return [];
   }
 
+  const amount = randomInteger(1, enabledCards.length);
+
+  return secureShuffle(enabledCards).slice(0, amount);
+}
+
+function createTextCardPayloadAtArrival() {
   return {
     type: "text-cards",
-    cards
+    cards: createRandomCardsAtArrival(),
+    tarot: null,
+    gift: null
+  };
+}
+
+function createTarotPayloadAtArrival() {
+  return {
+    type: "tarot",
+    cards: createRandomCardsAtArrival(),
+    tarot: chooseRandom(tarotCards),
+    gift: null
+  };
+}
+
+function createGiftPayloadAtArrival() {
+  return {
+    type: "gift",
+    cards: createRandomCardsAtArrival(),
+    tarot: null,
+    gift: chooseRandom(giftItems)
   };
 }
 
 /*
-  普通回应的内容入口。
-
-  下一步制作塔罗牌与礼物时，在这里随机决定：
-  - text-cards
-  - tarot
-  - gift
-  - 组合形式
-
-  重要：无论扩展成什么形式，这个函数始终只能在
-  “普通回应已经抵达”后执行，绝不在发送时预生成。
+  combo 允许塔罗、礼物、字卡三者同时抵达。
 */
-function createReplyAtArrival() {
-  return createTextCardPayloadAtArrival();
+function createComboPayloadAtArrival() {
+  return {
+    type: "combo",
+    cards: createRandomCardsAtArrival(),
+    tarot: chooseRandom(tarotCards),
+    gift: chooseRandom(giftItems)
+  };
 }
 
 /*
-  系统兜底内容。
+  只在信号真正抵达的当刻执行。
 
-  仅在等待上限到达，并且本轮从未收到普通回应时调用。
+  若塔罗或礼物数据尚未填充，相关类型不会参与随机池。
 */
+function createReplyAtArrival() {
+  const availableCreators = [
+    createTextCardPayloadAtArrival
+  ];
+
+  if (tarotCards.length) {
+    availableCreators.push(createTarotPayloadAtArrival);
+  }
+
+  if (giftItems.length) {
+    availableCreators.push(createGiftPayloadAtArrival);
+  }
+
+  if (tarotCards.length && giftItems.length) {
+    availableCreators.push(createComboPayloadAtArrival);
+  }
+
+  return chooseRandom(availableCreators)();
+}
+
 function createFallbackPayloadAtDeadline() {
   return {
     type: "fallback",
-    cards: [chooseRandom(fallbackCards)]
+    cards: [chooseRandom(fallbackCards)],
+    tarot: null,
+    gift: null
   };
 }
 
-/*
-  发送时创建的 session 只能保存等待窗口本身。
-
-  注意：
-  - 没有 normalPayload；
-  - 没有 fallbackPayload；
-  - 没有 candidateArrivalAt；
-  - 没有 normalWillArrive。
-
-  因此发送时，未来收到什么、什么时候收到，
-  都不被保存，也没有被程序提前决定。
-*/
 function createSession(recipient, question) {
   const settings = getSettings();
   const waitSeconds = Math.max(
@@ -222,10 +271,6 @@ function createSession(recipient, question) {
   };
 }
 
-function saveCurrentConversation() {
-  saveConversation(conversation);
-}
-
 function createQuestionMessage(session) {
   return {
     id: createId("question"),
@@ -236,28 +281,76 @@ function createQuestionMessage(session) {
   };
 }
 
-/*
-  source === "normal"：
-  此时才调用 createReplyAtArrival()。
-
-  source === "fallback"：
-  此时才调用 createFallbackPayloadAtDeadline()。
-
-  两者都没有预先生成。
-*/
 function createResponseMessage(session, source) {
-  const payload = source === "normal"
-    ? createReplyAtArrival()
-    : createFallbackPayloadAtDeadline();
-
   return {
     id: createId("response"),
     role: "response",
     recipient: session.recipient,
     source,
-    payload,
+    payload: source === "normal"
+      ? createReplyAtArrival()
+      : createFallbackPayloadAtDeadline(),
     createdAt: Date.now()
   };
+}
+
+function createCardsMarkup(cards = []) {
+  if (!cards.length) {
+    return "";
+  }
+
+  return `
+    <div class="response-card-row">
+      ${cards
+        .map((card) => `<span class="response-card">${escapeHtml(card)}</span>`)
+        .join("")}
+    </div>
+  `;
+}
+
+function createTarotMarkup(tarot) {
+  if (!tarot) {
+    return "";
+  }
+
+  return `
+    <section class="tarot-reply-card">
+      <div class="tarot-card-frame">
+        <span class="tarot-card-number">ARCANA</span>
+        <div class="tarot-card-art" aria-hidden="true">
+          ${tarot.svg}
+        </div>
+        <span class="tarot-card-number tarot-card-bottom">
+          ${escapeHtml(tarot.englishName || tarot.id)}
+        </span>
+      </div>
+
+      <div class="tarot-copy">
+        <span>一张意象卡</span>
+        <strong>${escapeHtml(tarot.name)}</strong>
+        <p>${escapeHtml(tarot.meaning)}</p>
+      </div>
+    </section>
+  `;
+}
+
+function createGiftMarkup(gift) {
+  if (!gift) {
+    return "";
+  }
+
+  return `
+    <section class="gift-reply-card">
+      <div class="gift-art" aria-hidden="true">
+        ${gift.svg}
+      </div>
+
+      <div class="gift-copy">
+        <span>有一样东西被送来</span>
+        <strong>${escapeHtml(gift.name)}</strong>
+      </div>
+    </section>
+  `;
 }
 
 function renderQuestionMessage(message) {
@@ -268,11 +361,14 @@ function renderQuestionMessage(message) {
 
   element.innerHTML = `
     <div class="message-meta">
-      <span class="message-kind">你的问题</span>
+      <span class="message-kind">你留下的问题</span>
       <time class="message-time">${formatTime(message.createdAt)}</time>
     </div>
 
-    <div class="message-bubble">${escapeHtml(message.content)}</div>
+    <div class="question-message-card">
+      <span class="question-message-to">TO / ${escapeHtml(message.recipient)}</span>
+      <p>${escapeHtml(message.content)}</p>
+    </div>
   `;
 
   return element;
@@ -280,33 +376,35 @@ function renderQuestionMessage(message) {
 
 function renderResponseMessage(message) {
   const element = document.createElement("article");
+  const payload = message.payload || {};
   const isFallback = message.source === "fallback";
 
   element.className = "message-block is-response";
   element.dataset.messageId = message.id;
 
-  const cardsMarkup = message.payload.cards
-    .map((card) => `<span class="response-card">${escapeHtml(card)}</span>`)
-    .join("");
-
   element.innerHTML = `
     <div class="message-meta">
-      <span class="message-kind">
-        ${isFallback ? "默认回音" : "收到回复"}
-      </span>
-
+      <span class="message-kind">${isFallback ? "留在原地的回音" : "一段回讯抵达"}</span>
       <time class="message-time">${formatTime(message.createdAt)}</time>
     </div>
 
-    <div class="message-bubble">
-      <span class="response-recipient">
-        FROM / ${escapeHtml(message.recipient)}
-      </span>
-
-      <div class="response-card-row">
-        ${cardsMarkup}
+    <section class="received-message-card">
+      <div class="received-card-header">
+        <span class="received-mark"></span>
+        <span>${isFallback ? "THE CHANNEL GREW QUIET" : "FROM / " + escapeHtml(message.recipient)}</span>
       </div>
-    </div>
+
+      <div class="received-card-content">
+        ${createTarotMarkup(payload.tarot)}
+        ${createGiftMarkup(payload.gift)}
+        ${createCardsMarkup(payload.cards)}
+      </div>
+
+      <div class="received-card-footer">
+        <span>${isFallback ? "未收到完整内容" : "内容已显现"}</span>
+        <span>${escapeHtml(payload.type || "text-cards")}</span>
+      </div>
+    </section>
   `;
 
   return element;
@@ -318,38 +416,78 @@ function renderPendingMessage(session) {
   element.className = "message-block is-pending";
   element.id = `pending-${session.id}`;
 
+  const waitingMarkup = WAITING_LINES
+    .map((line) => `<span>${escapeHtml(line)}</span>`)
+    .join("");
+
   element.innerHTML = `
-    <div class="message-meta">
-      <span class="message-kind">等待回应</span>
-      <time class="message-time" id="pendingCountdown-${session.id}">
-        LIMIT / ${formatRemainingTime(session.deadlineAt - Date.now())}
-      </time>
-    </div>
+    <section class="signal-observatory">
+      <div class="signal-observatory-top">
+        <span class="signal-live-dot"></span>
+        <span>传讯窗口仍然开启</span>
+        <time id="pendingCountdown-${session.id}">
+          LIMIT / ${formatRemainingTime(session.deadlineAt - Date.now())}
+        </time>
+      </div>
 
-    <div class="message-bubble pending-bubble">
-      <span class="pending-rings" aria-hidden="true"></span>
+      <div class="signal-core-wrap" aria-hidden="true">
+        <span class="signal-orbit signal-orbit-one"></span>
+        <span class="signal-orbit signal-orbit-two"></span>
+        <span class="signal-orbit signal-orbit-three"></span>
 
-      <span class="pending-copy">
-        <strong>消息拼贴中</strong>
-        <small>CHANNEL REMAINS OPEN</small>
-      </span>
-    </div>
+        <div class="signal-core">
+          <span></span>
+          <span></span>
+          <span></span>
+        </div>
+      </div>
+
+      <div class="signal-copy">
+        <span>正在等待远处的回讯</span>
+        <strong>让这一刻暂时不要结束</strong>
+      </div>
+
+      <div class="signal-wave" aria-hidden="true">
+        <svg viewBox="0 0 360 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path
+            d="M0 24H34L46 15L59 34L73 8L89 39L103 24H135L148 19L162 29L178 24H214L228 12L243 37L258 17L273 29L286 24H360"
+            stroke="currentColor"
+            stroke-width="1"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          />
+        </svg>
+      </div>
+
+      <div class="signal-line-window" aria-hidden="true">
+        <div class="signal-line-track">
+          ${waitingMarkup}
+          ${waitingMarkup}
+        </div>
+      </div>
+    </section>
   `;
 
   return element;
-}
-
-function escapeHtml(value) {
-  const element = document.createElement("div");
-  element.textContent = String(value);
-  return element.innerHTML;
 }
 
 function renderConversation() {
   messageList.innerHTML = "";
 
   const hasMessages = conversation.messages.length > 0;
-  emptyConversation.classList.toggle("is-hidden", hasMessages);
+  const hasActiveSession = Boolean(conversation.activeSession);
+
+  emptyConversation.classList.toggle(
+    "is-hidden",
+    hasMessages || hasActiveSession
+  );
+
+  questionPage.classList.toggle(
+    "is-pristine",
+    !hasMessages && !hasActiveSession
+  );
+
+  questionPage.classList.toggle("is-waiting", hasActiveSession);
 
   conversation.messages.forEach((message) => {
     const element = message.role === "question"
@@ -363,7 +501,7 @@ function renderConversation() {
     messageList.appendChild(renderPendingMessage(conversation.activeSession));
   }
 
-  setComposerState(Boolean(conversation.activeSession));
+  setComposerState(hasActiveSession);
   scrollConversationToBottom(false);
 }
 
@@ -375,8 +513,12 @@ function setComposerState(isLocked) {
   sendButton.disabled = isLocked;
 
   sendButton.querySelector("span").textContent = isLocked
-    ? "等待回应"
-    : "发送问题";
+    ? "CHANNEL OPEN"
+    : "OPEN CHANNEL";
+}
+
+function saveCurrentConversation() {
+  saveConversation(conversation);
 }
 
 function clearTransmissionTimers() {
@@ -404,16 +546,19 @@ function updatePendingCountdown() {
     return;
   }
 
-  const remainingTime = activeSession.deadlineAt - Date.now();
-
-  countdownElement.textContent = `LIMIT / ${formatRemainingTime(remainingTime)}`;
+  countdownElement.textContent =
+    `LIMIT / ${formatRemainingTime(activeSession.deadlineAt - Date.now())}`;
 }
 
 /*
-  普通回应真正抵达时才进入这里。
+  信号抵达的时刻：
+  1. 立刻停止等待计时；
+  2. 立刻随机生成普通回复；
+  3. 立刻写入本地记录；
+  4. 再播放回讯显现的视觉过渡。
 
-  这里才会随机生成回复内容。
-  在此之前，activeSession 内没有任何普通回复的数据。
+  因此视觉延迟不等于内容预生成；
+  payload 依然只会在抵达的当刻产生。
 */
 function completeActiveSession(source) {
   const activeSession = conversation.activeSession;
@@ -432,18 +577,24 @@ function completeActiveSession(source) {
   saveCurrentConversation();
   renderConversation();
 
-  questionInput.focus();
+  const responseElement = document.querySelector(
+    `[data-message-id="${responseMessage.id}"]`
+  );
+
+  if (responseElement && source === "normal") {
+    responseElement.classList.add("is-receiving");
+
+    receiveAnimationTimer = window.setTimeout(() => {
+      responseElement.classList.remove("is-receiving");
+      scrollConversationToBottom(true);
+      questionInput.focus();
+    }, 1050);
+  } else {
+    scrollConversationToBottom(true);
+    questionInput.focus();
+  }
 }
 
-/*
-  每次检查均为独立事件。
-
-  它不读取问题内容；
-  它不读取提问对象；
-  它不对字卡作语义匹配；
-  它不依赖先前检查的结果；
-  它不持有任何预先准备好的普通回复。
-*/
 function inspectSignal(sessionId) {
   const activeSession = conversation.activeSession;
 
@@ -451,31 +602,18 @@ function inspectSignal(sessionId) {
     return;
   }
 
-  const now = Date.now();
-
-  /*
-    最终时限已到，交给 fallbackTimer 处理兜底。
-    即使两个定时器极接近，也不会在截止后生成普通回应。
-  */
-  if (now >= activeSession.deadlineAt) {
+  if (Date.now() >= activeSession.deadlineAt) {
     return;
   }
 
-  /*
-    这一次才独立随机判断是否收到回应。
-    结果不会提前存储，也不影响下一次检查。
-  */
-  const signalArrived = randomInteger(1, 100) <= SIGNAL_ARRIVAL_CHANCE;
+  const signalArrived =
+    randomInteger(1, 100) <= SIGNAL_ARRIVAL_CHANCE;
 
   if (signalArrived) {
     completeActiveSession("normal");
     return;
   }
 
-  /*
-    未收到回应：
-    再为下一次检测随机生成 0.8 ～ 5.2 秒间隔。
-  */
   const nextDelay = randomInteger(
     MIN_SIGNAL_CHECK_DELAY,
     MAX_SIGNAL_CHECK_DELAY
@@ -483,11 +621,6 @@ function inspectSignal(sessionId) {
 
   const remainingTime = activeSession.deadlineAt - Date.now();
 
-  /*
-    若剩余时间不足一次完整检测，
-    不再安排跨越 deadline 的普通回应检查。
-    等待系统到截止时执行真正的兜底。
-  */
   if (nextDelay >= remainingTime) {
     return;
   }
@@ -497,19 +630,6 @@ function inspectSignal(sessionId) {
   }, nextDelay);
 }
 
-/*
-  为当前等待窗口启动两条完全不同职责的流程：
-
-  1. 信号检测流程：
-     - 非固定随机间隔；
-     - 每次独立随机判断是否收到普通回应；
-     - 收到时才生成普通回复。
-
-  2. 最终兜底流程：
-     - 只负责等待 deadline；
-     - 只有届时仍处于 waiting 才生成兜底回复；
-     - 不会预先抽取兜底卡。
-*/
 function scheduleActiveSession() {
   clearTransmissionTimers();
 
@@ -519,13 +639,8 @@ function scheduleActiveSession() {
     return;
   }
 
-  const now = Date.now();
-  const remainingTime = activeSession.deadlineAt - now;
+  const remainingTime = activeSession.deadlineAt - Date.now();
 
-  /*
-    用户离开后再回来，若等待上限已经过去，
-    此时才执行兜底抽取。
-  */
   if (remainingTime <= 0) {
     completeActiveSession("fallback");
     return;
@@ -549,10 +664,6 @@ function scheduleActiveSession() {
     }
   }, remainingTime);
 
-  /*
-    首次检测同样不固定。
-    发送瞬间不检查，不抽卡，不生成结果。
-  */
   const firstCheckDelay = randomInteger(
     MIN_SIGNAL_CHECK_DELAY,
     MAX_SIGNAL_CHECK_DELAY
@@ -566,8 +677,7 @@ function scheduleActiveSession() {
 }
 
 function updateWaitTimeLabel() {
-  const settings = getSettings();
-  waitTimeLabel.textContent = formatWaitTime(settings.waitSeconds);
+  waitTimeLabel.textContent = formatWaitTime(getSettings().waitSeconds);
 }
 
 function updateCharacterCount() {
@@ -595,11 +705,8 @@ function submitQuestion(event) {
   }
 
   /*
-    此刻只创建一个空白等待窗口。
-    没有抽取普通回复；
-    没有选择回复类型；
-    没有决定抵达时间；
-    没有生成塔罗、礼物或字卡。
+    发送时只产生空白 session：
+    不抽字卡、不选塔罗、不选礼物、不定回复类型、不定到达时间。
   */
   const session = createSession(recipient, question);
 
@@ -625,6 +732,7 @@ function clearHistory() {
   }
 
   clearTransmissionTimers();
+  window.clearTimeout(receiveAnimationTimer);
 
   conversation = {
     messages: [],
@@ -635,8 +743,22 @@ function clearHistory() {
   renderConversation();
 }
 
+/* Canvas 长图 */
+
+function roundRect(context, x, y, width, height, radius) {
+  const safeRadius = Math.min(radius, width / 2, height / 2);
+
+  context.beginPath();
+  context.moveTo(x + safeRadius, y);
+  context.arcTo(x + width, y, x + width, y + height, safeRadius);
+  context.arcTo(x + width, y + height, x, y + height, safeRadius);
+  context.arcTo(x, y + height, x, y, safeRadius);
+  context.arcTo(x, y, x + width, y, safeRadius);
+  context.closePath();
+}
+
 function wrapCanvasText(context, text, maxWidth) {
-  const characters = Array.from(text);
+  const characters = Array.from(String(text || ""));
   const lines = [];
   let currentLine = "";
 
@@ -658,16 +780,31 @@ function wrapCanvasText(context, text, maxWidth) {
   return lines;
 }
 
-function roundRect(context, x, y, width, height, radius) {
-  const safeRadius = Math.min(radius, width / 2, height / 2);
+function getResponseExportLines(message, context, maxWidth) {
+  const payload = message.payload || {};
+  const lines = [];
 
-  context.beginPath();
-  context.moveTo(x + safeRadius, y);
-  context.arcTo(x + width, y, x + width, y + height, safeRadius);
-  context.arcTo(x + width, y + height, x, y + height, safeRadius);
-  context.arcTo(x, y + height, x, y, safeRadius);
-  context.arcTo(x, y, x + width, y, safeRadius);
-  context.closePath();
+  if (payload.tarot) {
+    lines.push(`意象卡 · ${payload.tarot.name}`);
+
+    if (payload.tarot.meaning) {
+      lines.push(
+        ...wrapCanvasText(context, payload.tarot.meaning, maxWidth)
+      );
+    }
+  }
+
+  if (payload.gift) {
+    lines.push(`送来了一样东西 · ${payload.gift.name}`);
+  }
+
+  if (Array.isArray(payload.cards) && payload.cards.length) {
+    lines.push(
+      ...wrapCanvasText(context, payload.cards.join("  ·  "), maxWidth)
+    );
+  }
+
+  return lines.length ? lines : ["没有可显示的内容"];
 }
 
 function createExportImage() {
@@ -689,38 +826,23 @@ function createExportImage() {
   context.font = '32px "PingFang SC", "Microsoft YaHei", sans-serif';
 
   const blocks = exportMessages.map((message) => {
-    if (message.role === "question") {
-      const lines = wrapCanvasText(
-        context,
-        message.content,
-        contentWidth - 88
-      );
+    const lines = message.role === "question"
+      ? wrapCanvasText(context, message.content, contentWidth - 92)
+      : getResponseExportLines(message, context, contentWidth - 92);
 
-      return {
-        ...message,
-        lines,
-        height: 112 + lines.length * lineHeight
-      };
-    }
-
-    const allCards = message.payload.cards.join("  ·  ");
-    const lines = wrapCanvasText(
-      context,
-      allCards,
-      contentWidth - 88
-    );
+    const topSpace = message.role === "question" ? 124 : 160;
 
     return {
       ...message,
       lines,
-      height: 148 + lines.length * lineHeight
+      height: topSpace + lines.length * lineHeight
     };
   });
 
-  const totalHeight = 250 + blocks.reduce(
-    (height, block) => height + block.height + 30,
+  const totalHeight = 260 + blocks.reduce(
+    (height, block) => height + block.height + 34,
     0
-  ) + 90;
+  ) + 110;
 
   canvas.width = canvasWidth;
   canvas.height = totalHeight;
@@ -730,14 +852,14 @@ function createExportImage() {
 
   const backgroundGradient = context.createRadialGradient(
     canvasWidth / 2,
-    100,
+    90,
     20,
     canvasWidth / 2,
-    220,
-    800
+    180,
+    860
   );
 
-  backgroundGradient.addColorStop(0, "rgba(255,255,255,0.95)");
+  backgroundGradient.addColorStop(0, "rgba(255,255,255,0.96)");
   backgroundGradient.addColorStop(1, "rgba(230,230,226,0)");
 
   context.fillStyle = backgroundGradient;
@@ -754,25 +876,24 @@ function createExportImage() {
   context.fillStyle = "rgba(17,17,17,0.52)";
   context.font = '18px "SFMono-Regular", "Courier New", monospace';
   context.fillText(
-    "UNKNOWN-MESSAGE / CONVERSATION ARCHIVE",
+    "UNKNOWN-MESSAGE / A RECORD OF WHAT RETURNED",
     sidePadding,
     156
   );
 
   context.beginPath();
-  context.moveTo(sidePadding, 186);
-  context.lineTo(canvasWidth - sidePadding, 186);
+  context.moveTo(sidePadding, 190);
+  context.lineTo(canvasWidth - sidePadding, 190);
   context.strokeStyle = "rgba(17,17,17,0.2)";
   context.stroke();
 
-  let currentY = 230;
+  let currentY = 232;
 
   blocks.forEach((block) => {
     const isQuestion = block.role === "question";
-
     const bubbleWidth = isQuestion
-      ? Math.min(contentWidth * 0.78, 760)
-      : Math.min(contentWidth * 0.84, 810);
+      ? Math.min(contentWidth * 0.76, 760)
+      : Math.min(contentWidth * 0.9, 860);
 
     const bubbleX = isQuestion
       ? canvasWidth - sidePadding - bubbleWidth
@@ -792,8 +913,8 @@ function createExportImage() {
       bubbleX,
       bubbleY,
       bubbleWidth,
-      block.height - 25,
-      20
+      block.height - 20,
+      isQuestion ? 18 : 8
     );
 
     context.fill();
@@ -807,14 +928,21 @@ function createExportImage() {
 
     const label = isQuestion
       ? `你的问题 / ${formatTime(block.createdAt)}`
-      : `${block.source === "fallback" ? "默认回音" : "收到回复"} / ${formatTime(block.createdAt)}`;
+      : `${block.source === "fallback" ? "留在原地的回音" : "一段回讯抵达"} / ${formatTime(block.createdAt)}`;
 
     context.fillText(label, bubbleX, currentY + 14);
 
-    if (!isQuestion) {
+    if (isQuestion) {
+      context.fillStyle = "rgba(242,242,239,0.62)";
+      context.font = '17px "SFMono-Regular", "Courier New", monospace';
+      context.fillText(
+        `TO / ${block.recipient}`,
+        bubbleX + 30,
+        bubbleY + 42
+      );
+    } else {
       context.fillStyle = "rgba(17,17,17,0.48)";
       context.font = '17px "SFMono-Regular", "Courier New", monospace';
-
       context.fillText(
         `FROM / ${block.recipient}`,
         bubbleX + 30,
@@ -825,9 +953,7 @@ function createExportImage() {
     context.fillStyle = isQuestion ? "#f2f2ef" : "#111111";
     context.font = '32px "PingFang SC", "Microsoft YaHei", sans-serif';
 
-    const textStartY = isQuestion
-      ? bubbleY + 54
-      : bubbleY + 88;
+    const textStartY = bubbleY + (isQuestion ? 88 : 88);
 
     block.lines.forEach((line, index) => {
       context.fillText(
@@ -837,7 +963,7 @@ function createExportImage() {
       );
     });
 
-    currentY += block.height + 30;
+    currentY += block.height + 34;
   });
 
   context.beginPath();
@@ -848,7 +974,6 @@ function createExportImage() {
 
   context.fillStyle = "rgba(17,17,17,0.5)";
   context.font = '17px "SFMono-Regular", "Courier New", monospace';
-
   context.fillText(
     "LOCAL RECORD · GENERATED ON DEVICE",
     sidePadding,
@@ -891,10 +1016,6 @@ function initialize() {
     window.location.href = "./settings.html";
   });
 
-  /*
-    当页面进入后台、手机锁屏或切回应用时，
-    不重新随机、不重置会话，只按原 deadline 判断。
-  */
   document.addEventListener("visibilitychange", () => {
     if (!document.hidden) {
       scheduleActiveSession();

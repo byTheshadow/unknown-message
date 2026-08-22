@@ -8,8 +8,8 @@
   color: var(--ink);
   background:
     radial-gradient(
-      circle at 50% 22%,
-      rgba(255, 255, 255, 0.95) 0%,
+      circle at 50% 18%,
+      rgba(255, 255, 255, 0.97) 0%,
       rgba(244, 244, 241, 0.94) 38%,
       rgba(228, 228, 224, 0.98) 100%
     );
@@ -20,9 +20,9 @@
   inset: 0;
   z-index: 20;
   pointer-events: none;
-  opacity: 0.2;
+  opacity: 0.18;
   background-image:
-    radial-gradient(rgba(0, 0, 0, 0.18) 0.45px, transparent 0.55px);
+    radial-gradient(rgba(0, 0, 0, 0.16) 0.45px, transparent 0.55px);
   background-size: 5px 5px;
   mix-blend-mode: soft-light;
 }
@@ -36,7 +36,7 @@
 }
 
 .ambient-one {
-  top: 5%;
+  top: 4%;
   left: -20%;
   width: min(88vw, 620px);
   aspect-ratio: 1;
@@ -50,7 +50,7 @@
   bottom: 8%;
   width: min(72vw, 480px);
   aspect-ratio: 1;
-  opacity: 0.16;
+  opacity: 0.15;
   background: var(--ink);
   animation: question-ambient-drift-reverse 13s ease-in-out infinite alternate;
 }
@@ -148,7 +148,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 24px 24px 17px;
+  padding: 24px 24px 12px;
   color: var(--ink-muted);
   font-size: 8px;
   letter-spacing: 0.11em;
@@ -160,11 +160,16 @@
   gap: 8px;
 }
 
-.meta-dot {
+.meta-dot,
+.signal-live-dot,
+.received-mark {
   width: 5px;
   height: 5px;
   border-radius: 50%;
   background: var(--ink);
+}
+
+.meta-dot {
   animation: meta-dot-pulse 1.8s ease-out infinite;
 }
 
@@ -190,7 +195,7 @@
   flex: 1;
   min-height: 0;
   overflow-y: auto;
-  padding: 6px 24px 252px;
+  padding: 4px 24px 24px;
   scrollbar-width: none;
 }
 
@@ -201,7 +206,8 @@
 .empty-conversation {
   position: relative;
   display: grid;
-  min-height: 390px;
+  min-height: 160px;
+  padding: 24px;
   overflow: hidden;
   place-content: center;
   place-items: center;
@@ -215,37 +221,16 @@
 }
 
 .empty-orbit-one {
-  width: 188px;
-  height: 188px;
+  width: 148px;
+  height: 148px;
   border-style: dashed;
   animation: empty-orbit-spin 16s linear infinite;
 }
 
 .empty-orbit-two {
-  width: 124px;
-  height: 124px;
+  width: 100px;
+  height: 100px;
   animation: empty-orbit-spin-reverse 10s linear infinite;
-}
-
-.empty-node {
-  position: relative;
-  z-index: 1;
-  display: grid;
-  width: 74px;
-  height: 74px;
-  margin-bottom: 30px;
-  place-items: center;
-  border: 1px solid var(--line-strong);
-  border-radius: 50%;
-  background: rgba(255, 255, 255, 0.32);
-  box-shadow: 0 12px 36px rgba(17, 17, 17, 0.05);
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
-}
-
-.empty-node svg {
-  width: 36px;
-  height: 36px;
 }
 
 .empty-eyebrow {
@@ -255,14 +240,14 @@
   color: var(--ink-muted);
   font-family: var(--font-mono);
   font-size: 8px;
-  letter-spacing: 0.14em;
+  letter-spacing: 0.13em;
 }
 
 .empty-conversation h1 {
   position: relative;
   z-index: 1;
   margin: 13px 0 0;
-  font-size: 22px;
+  font-size: 21px;
   font-weight: 500;
   letter-spacing: 0.12em;
 }
@@ -279,227 +264,531 @@
 .message-list {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 23px;
   width: 100%;
-  padding-top: 8px;
+  padding: 8px 0 12px;
 }
 
 .message-block {
   display: flex;
   flex-direction: column;
-  max-width: 88%;
+  width: 100%;
   animation: message-enter 0.54s cubic-bezier(0.2, 0.8, 0.2, 1) both;
 }
 
 .message-block.is-question {
-  align-self: flex-end;
   align-items: flex-end;
-}
-
-.message-block.is-response,
-.message-block.is-pending {
-  align-self: flex-start;
-  align-items: flex-start;
 }
 
 .message-meta {
   display: flex;
   align-items: center;
   gap: 8px;
-  margin: 0 4px 7px;
+  margin: 0 4px 8px;
   color: var(--ink-muted);
 }
 
-.message-kind {
-  font-size: 8px;
-  letter-spacing: 0.12em;
+.is-question .message-meta {
+  justify-content: flex-end;
 }
 
+.message-kind,
 .message-time {
   font-size: 8px;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.1em;
 }
 
-.message-bubble {
-  position: relative;
-  padding: 15px 16px;
-  border: 1px solid var(--line);
-  border-radius: 16px;
-  box-shadow: 0 12px 32px rgba(17, 17, 17, 0.04);
-  font-size: 14px;
-  letter-spacing: 0.045em;
-  line-height: 1.75;
-  word-break: break-word;
-  backdrop-filter: blur(15px);
-  -webkit-backdrop-filter: blur(15px);
-}
-
-.is-question .message-bubble {
-  border-top-right-radius: 3px;
+.question-message-card {
+  width: min(88%, 490px);
+  padding: 16px 17px 17px;
+  border: 1px solid rgba(17, 17, 17, 0.9);
+  border-radius: 17px 17px 4px 17px;
   color: var(--paper);
   background: var(--ink);
+  box-shadow: 0 14px 30px rgba(17, 17, 17, 0.1);
 }
 
-.is-response .message-bubble {
-  border-top-left-radius: 3px;
-  background: rgba(255, 255, 255, 0.45);
-}
-
-.response-recipient {
+.question-message-to {
   display: block;
-  margin-bottom: 11px;
-  color: var(--ink-muted);
+  margin-bottom: 12px;
+  color: rgba(242, 242, 239, 0.55);
   font-family: var(--font-mono);
   font-size: 8px;
   letter-spacing: 0.12em;
 }
+
+.question-message-card p {
+  margin: 0;
+  font-size: 14px;
+  letter-spacing: 0.055em;
+  line-height: 1.85;
+  word-break: break-word;
+}
+
+/* 回讯档案卡 */
+
+.received-message-card {
+  width: min(100%, 570px);
+  padding: 15px;
+  overflow: hidden;
+  border: 1px solid var(--line-strong);
+  border-radius: 7px;
+  background:
+    linear-gradient(
+      135deg,
+      rgba(255, 255, 255, 0.76),
+      rgba(255, 255, 255, 0.26)
+    );
+  box-shadow:
+    0 18px 44px rgba(17, 17, 17, 0.06),
+    inset 0 1px 0 rgba(255, 255, 255, 0.62);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+}
+
+.received-card-header,
+.received-card-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 9px;
+  color: var(--ink-muted);
+  font-family: var(--font-mono);
+  font-size: 8px;
+  letter-spacing: 0.1em;
+}
+
+.received-card-header {
+  padding-bottom: 13px;
+  border-bottom: 1px solid var(--line);
+}
+
+.received-card-header span:nth-child(2) {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.received-card-content {
+  display: grid;
+  gap: 14px;
+  padding: 16px 0;
+}
+
+.received-card-footer {
+  padding-top: 12px;
+  border-top: 1px solid var(--line);
+  font-size: 7px;
+  color: rgba(17, 17, 17, 0.38);
+}
+
+/* 字卡 */
 
 .response-card-row {
   display: flex;
   flex-wrap: wrap;
-  gap: 7px;
+  gap: 8px;
 }
 
 .response-card {
   display: inline-flex;
-  padding: 6px 9px;
+  padding: 8px 10px;
   border: 1px solid var(--line-strong);
-  border-radius: 6px;
+  border-radius: 3px;
   background: rgba(255, 255, 255, 0.48);
   color: var(--ink);
   font-size: 13px;
-  letter-spacing: 0.05em;
-  line-height: 1.5;
-  box-shadow: 0 3px 10px rgba(17, 17, 17, 0.025);
+  letter-spacing: 0.06em;
+  line-height: 1.55;
+  box-shadow: 0 4px 13px rgba(17, 17, 17, 0.035);
 }
 
-.pending-bubble {
-  display: flex;
+.response-card:nth-child(3n + 2) {
+  transform: translateY(4px) rotate(-1deg);
+}
+
+.response-card:nth-child(3n) {
+  transform: translateY(-2px) rotate(0.8deg);
+}
+
+/* 塔罗 */
+
+.tarot-reply-card {
+  display: grid;
+  grid-template-columns: 118px 1fr;
+  gap: 16px;
   align-items: center;
-  gap: 10px;
-  min-width: 178px;
-  border-top-left-radius: 3px;
-  background: rgba(255, 255, 255, 0.36);
 }
 
-.pending-rings {
+.tarot-card-frame {
   position: relative;
-  width: 22px;
-  height: 22px;
-}
-
-.pending-rings::before,
-.pending-rings::after {
-  position: absolute;
-  inset: 0;
-  content: "";
-  border: 1px solid var(--ink);
-  border-radius: 50%;
-  animation: pending-ring 1.8s ease-out infinite;
-}
-
-.pending-rings::after {
-  animation-delay: 0.9s;
-}
-
-.pending-copy {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  justify-content: space-between;
+  min-height: 174px;
+  padding: 8px;
+  overflow: hidden;
+  border: 1px solid var(--ink);
+  background: rgba(255, 255, 255, 0.34);
 }
 
-.pending-copy strong {
-  font-size: 12px;
-  font-weight: 500;
-  letter-spacing: 0.08em;
+.tarot-card-frame::before {
+  position: absolute;
+  inset: 4px;
+  content: "";
+  border: 1px solid var(--line);
+  pointer-events: none;
 }
 
-.pending-copy small {
+.tarot-card-number {
+  position: relative;
+  z-index: 1;
+  color: var(--ink-muted);
+  font-family: var(--font-mono);
+  font-size: 6px;
+  letter-spacing: 0.12em;
+  text-align: center;
+}
+
+.tarot-card-art {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  width: 100%;
+  aspect-ratio: 1;
+  place-items: center;
+}
+
+.tarot-card-art svg {
+  width: 84px;
+  height: 84px;
+}
+
+.tarot-card-bottom {
+  font-size: 5px;
+}
+
+.tarot-copy {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.tarot-copy span,
+.gift-copy span {
   color: var(--ink-muted);
   font-family: var(--font-mono);
   font-size: 8px;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.1em;
 }
 
-.composer-panel {
-  position: fixed;
-  right: 0;
-  bottom: 0;
-  left: 0;
-  width: 100%;
-  padding:
-    11px max(24px, env(safe-area-inset-right))
-    max(18px, env(safe-area-inset-bottom))
-    max(24px, env(safe-area-inset-left));
-  border-top: 1px solid var(--line);
-  background: rgba(242, 242, 239, 0.72);
-  box-shadow: 0 -18px 42px rgba(242, 242, 239, 0.46);
-  backdrop-filter: blur(24px);
-  -webkit-backdrop-filter: blur(24px);
+.tarot-copy strong,
+.gift-copy strong {
+  font-size: 17px;
+  font-weight: 500;
+  letter-spacing: 0.1em;
 }
 
-.composer-panel > * {
-  width: min(100%, 712px);
-  margin-right: auto;
-  margin-left: auto;
+.tarot-copy p {
+  margin: 0;
+  color: var(--ink-soft);
+  font-size: 12px;
+  letter-spacing: 0.06em;
+  line-height: 1.75;
 }
 
-.record-notice {
+/* 礼物 */
+
+.gift-reply-card {
   display: flex;
   align-items: center;
-  gap: 7px;
-  min-height: 24px;
-  color: var(--ink-muted);
-  font-size: 8px;
-  letter-spacing: 0.04em;
+  gap: 15px;
+  min-height: 98px;
+  padding: 13px;
+  border: 1px dashed var(--line-strong);
+  background: rgba(255, 255, 255, 0.22);
 }
 
-.record-notice svg {
+.gift-art {
+  display: grid;
   flex: 0 0 auto;
-  width: 13px;
+  width: 68px;
+  height: 68px;
+  place-items: center;
+  border: 1px solid var(--line);
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.42);
+}
+
+.gift-art svg {
+  width: 40px;
+  height: 40px;
+}
+
+.gift-copy {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* 等待观测台 */
+
+.is-pending {
+  align-items: center;
+}
+
+.signal-observatory {
+  position: relative;
+  width: min(100%, 610px);
+  padding: 16px;
+  overflow: hidden;
+  border: 1px solid var(--line-strong);
+  border-radius: 8px;
+  background:
+    radial-gradient(
+      circle at 50% 43%,
+      rgba(255, 255, 255, 0.8),
+      rgba(255, 255, 255, 0.2) 58%,
+      rgba(255, 255, 255, 0.08)
+    );
+  box-shadow:
+    0 22px 54px rgba(17, 17, 17, 0.07),
+    inset 0 1px 0 rgba(255, 255, 255, 0.65);
+  backdrop-filter: blur(22px);
+  -webkit-backdrop-filter: blur(22px);
+}
+
+.signal-observatory-top {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--ink-muted);
+  font-family: var(--font-mono);
+  font-size: 8px;
+  letter-spacing: 0.1em;
+}
+
+.signal-observatory-top time {
+  margin-left: auto;
+  color: var(--ink);
+}
+
+.signal-live-dot {
+  animation: meta-dot-pulse 1.7s ease-out infinite;
+}
+
+.signal-core-wrap {
+  position: relative;
+  display: grid;
+  width: 180px;
+  height: 180px;
+  margin: 14px auto 5px;
+  place-items: center;
+}
+
+.signal-orbit {
+  position: absolute;
+  border: 1px solid rgba(17, 17, 17, 0.2);
+  border-radius: 50%;
+}
+
+.signal-orbit-one {
+  width: 62px;
+  height: 62px;
+  animation: signal-orbit-breathe 2.6s ease-in-out infinite;
+}
+
+.signal-orbit-two {
+  width: 116px;
+  height: 116px;
+  border-style: dashed;
+  animation: empty-orbit-spin 14s linear infinite;
+}
+
+.signal-orbit-three {
+  width: 166px;
+  height: 166px;
+  opacity: 0.65;
+  animation: signal-orbit-breathe 2.6s ease-in-out 0.7s infinite;
+}
+
+.signal-core {
+  display: flex;
+  align-items: end;
+  justify-content: center;
+  gap: 5px;
+  width: 38px;
+  height: 42px;
+}
+
+.signal-core span {
+  width: 2px;
+  border-radius: 4px;
+  background: var(--ink);
+  animation: signal-bars 1.4s ease-in-out infinite;
+}
+
+.signal-core span:nth-child(1) {
   height: 13px;
 }
 
-.record-notice button {
+.signal-core span:nth-child(2) {
+  height: 31px;
+  animation-delay: 0.18s;
+}
+
+.signal-core span:nth-child(3) {
+  height: 19px;
+  animation-delay: 0.36s;
+}
+
+.signal-copy {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 9px;
+  text-align: center;
+}
+
+.signal-copy span {
+  color: var(--ink-muted);
+  font-family: var(--font-mono);
+  font-size: 8px;
+  letter-spacing: 0.12em;
+}
+
+.signal-copy strong {
+  font-size: 17px;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+}
+
+.signal-wave {
+  margin: 20px 8px 15px;
+  color: rgba(17, 17, 17, 0.5);
+}
+
+.signal-wave svg {
+  display: block;
+  width: 100%;
+  height: 38px;
+  animation: signal-wave-drift 3.2s ease-in-out infinite alternate;
+}
+
+.signal-line-window {
+  height: 27px;
+  overflow: hidden;
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+}
+
+.signal-line-track {
+  display: flex;
+  width: max-content;
+  animation: signal-text-slide 28s linear infinite;
+}
+
+.signal-line-track span {
+  padding: 8px 22px;
+  color: rgba(17, 17, 17, 0.43);
+  font-family: var(--font-mono);
+  font-size: 7px;
+  letter-spacing: 0.1em;
+  white-space: nowrap;
+}
+
+/* 回讯显现动画 */
+
+.is-receiving .received-message-card {
+  animation: received-card-arrival 1.05s cubic-bezier(0.18, 0.78, 0.18, 1) both;
+}
+
+.is-receiving .received-card-content {
+  animation: received-content-arrival 0.75s ease 0.36s both;
+}
+
+.is-receiving .received-card-header::after {
   margin-left: auto;
-  padding: 0;
+  color: var(--ink);
+  content: "回讯正在显现";
+  font-family: var(--font-mono);
+  font-size: 7px;
+  letter-spacing: 0.1em;
+  animation: received-label-fade 1s ease both;
+}
+
+/* 提问台 */
+
+.composer-panel {
+  padding:
+    14px 24px
+    max(24px, env(safe-area-inset-bottom));
+}
+
+.composer-intro {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.composer-index {
+  color: var(--ink-muted);
+  font-family: var(--font-mono);
+  font-size: 8px;
+  letter-spacing: 0.13em;
+}
+
+.composer-intro strong {
+  font-size: 18px;
+  font-weight: 500;
+  letter-spacing: 0.11em;
+}
+
+.composer-intro p {
+  margin: 0;
   color: var(--ink-soft);
-  border: 0;
-  border-bottom: 1px solid var(--line-strong);
-  background: transparent;
-  font-size: 9px;
-  cursor: pointer;
+  font-size: 12px;
+  letter-spacing: 0.05em;
+  line-height: 1.7;
 }
 
 .question-form {
   display: grid;
-  grid-template-columns: 148px 1fr;
+  grid-template-columns: minmax(130px, 0.36fr) 1fr;
   gap: 10px;
-  margin-top: 8px;
 }
 
 .field-group {
   display: flex;
   flex-direction: column;
   min-width: 0;
-  padding: 11px 13px;
+  padding: 13px 14px;
   border: 1px solid var(--line);
-  border-radius: 14px;
-  background: rgba(255, 255, 255, 0.4);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.38);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.42);
   transition:
     border-color 0.25s ease,
     box-shadow 0.25s ease,
-    background 0.25s ease;
+    background 0.25s ease,
+    transform 0.25s ease;
 }
 
 .field-group:focus-within {
   border-color: var(--line-strong);
-  background: rgba(255, 255, 255, 0.64);
-  box-shadow: 0 8px 24px rgba(17, 17, 17, 0.05);
+  background: rgba(255, 255, 255, 0.66);
+  box-shadow: 0 11px 25px rgba(17, 17, 17, 0.05);
+  transform: translateY(-1px);
+}
+
+.field-question {
+  grid-row: span 2;
+  min-height: 137px;
 }
 
 .field-label {
-  margin-bottom: 7px;
+  margin-bottom: 10px;
   color: var(--ink-muted);
   font-size: 8px;
   letter-spacing: 0.12em;
@@ -515,22 +804,18 @@
   outline: 0;
   background: transparent;
   font-size: 13px;
-  letter-spacing: 0.04em;
-  line-height: 1.6;
+  letter-spacing: 0.045em;
+  line-height: 1.7;
+}
+
+.field-question textarea {
+  flex: 1;
+  min-height: 90px;
 }
 
 .field-group input::placeholder,
 .field-group textarea::placeholder {
   color: rgba(17, 17, 17, 0.34);
-}
-
-.field-question {
-  grid-row: span 2;
-}
-
-.field-question textarea {
-  min-height: 51px;
-  max-height: 96px;
 }
 
 .form-bottom {
@@ -552,14 +837,15 @@
   align-items: center;
   justify-content: center;
   gap: 11px;
-  min-height: 44px;
-  padding: 0 16px 0 19px;
+  min-height: 48px;
+  padding: 0 17px 0 20px;
   border: 1px solid var(--ink);
-  border-radius: 12px;
+  border-radius: 5px;
   color: var(--paper);
   background: var(--ink);
-  font-size: 13px;
-  letter-spacing: 0.1em;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.14em;
   cursor: pointer;
   transition:
     opacity 0.25s ease,
@@ -586,12 +872,80 @@
 }
 
 .question-form.is-locked .field-group {
-  opacity: 0.48;
+  opacity: 0.42;
 }
 
 .question-form.is-locked .send-button {
   opacity: 0.45;
 }
+
+.record-notice {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  min-height: 24px;
+  margin-top: 11px;
+  color: var(--ink-muted);
+  font-size: 8px;
+  letter-spacing: 0.04em;
+}
+
+.record-notice svg {
+  flex: 0 0 auto;
+  width: 13px;
+  height: 13px;
+}
+
+.record-notice button {
+  margin-left: auto;
+  padding: 0;
+  color: var(--ink-soft);
+  border: 0;
+  border-bottom: 1px solid var(--line-strong);
+  background: transparent;
+  font-size: 9px;
+  cursor: pointer;
+}
+
+/* 无记录时，提问台成为中部主视觉 */
+
+.question-page.is-pristine .conversation-area {
+  flex: 0;
+}
+
+.question-page.is-pristine .empty-conversation {
+  min-height: 150px;
+}
+
+.question-page.is-pristine .composer-panel {
+  width: min(calc(100% - 48px), 590px);
+  margin-top: auto;
+  margin-bottom: auto;
+  padding: 24px;
+  border: 1px solid var(--line-strong);
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.28);
+  box-shadow:
+    0 24px 60px rgba(17, 17, 17, 0.055),
+    inset 0 1px 0 rgba(255, 255, 255, 0.62);
+  backdrop-filter: blur(22px);
+  -webkit-backdrop-filter: blur(22px);
+}
+
+.question-page.is-pristine .composer-intro {
+  text-align: center;
+  align-items: center;
+}
+
+.question-page.is-pristine .composer-intro strong {
+  font-size: 21px;
+}
+
+.question-page.is-waiting .composer-panel {
+  opacity: 0.54;
+}
+
+/* 导出弹窗 */
 
 .export-layer {
   position: fixed;
@@ -684,6 +1038,8 @@
   text-align: center;
 }
 
+/* 动画 */
+
 @keyframes question-ambient-drift {
   from {
     transform: translate(-6%, -5%) scale(0.9);
@@ -727,10 +1083,52 @@
   }
 }
 
+@keyframes signal-orbit-breathe {
+  0%,
+  100% {
+    opacity: 0.25;
+    transform: scale(0.88);
+  }
+
+  50% {
+    opacity: 0.8;
+    transform: scale(1.06);
+  }
+}
+
+@keyframes signal-bars {
+  0%,
+  100% {
+    transform: scaleY(0.52);
+  }
+
+  50% {
+    transform: scaleY(1);
+  }
+}
+
+@keyframes signal-wave-drift {
+  from {
+    opacity: 0.3;
+    transform: translateX(-4px) scaleY(0.78);
+  }
+
+  to {
+    opacity: 0.75;
+    transform: translateX(4px) scaleY(1);
+  }
+}
+
+@keyframes signal-text-slide {
+  to {
+    transform: translateX(-50%);
+  }
+}
+
 @keyframes message-enter {
   from {
     opacity: 0;
-    transform: translateY(10px);
+    transform: translateY(12px);
   }
 
   to {
@@ -739,15 +1137,46 @@
   }
 }
 
-@keyframes pending-ring {
+@keyframes received-card-arrival {
   0% {
-    opacity: 0.7;
-    transform: scale(0.45);
+    opacity: 0;
+    filter: blur(8px);
+    transform: translateY(12px) scale(0.98);
+  }
+
+  34% {
+    opacity: 0.64;
+    filter: blur(2px);
   }
 
   100% {
+    opacity: 1;
+    filter: blur(0);
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes received-content-arrival {
+  from {
     opacity: 0;
-    transform: scale(1.25);
+    transform: translateY(8px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes received-label-fade {
+  from {
+    opacity: 0;
+    transform: translateX(-5px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(0);
   }
 }
 
@@ -776,13 +1205,12 @@
 
   .conversation-area {
     padding-right: 20px;
-    padding-bottom: 290px;
     padding-left: 20px;
   }
 
   .composer-panel {
-    padding-right: 16px;
-    padding-left: 16px;
+    padding-right: 20px;
+    padding-left: 20px;
   }
 
   .question-form {
@@ -791,14 +1219,30 @@
 
   .field-question {
     grid-row: auto;
+    min-height: 148px;
   }
 
   .form-bottom {
-    min-height: 44px;
+    min-height: 48px;
   }
 
-  .message-block {
-    max-width: 92%;
+  .question-page.is-pristine .composer-panel {
+    width: calc(100% - 40px);
+    padding: 20px;
+  }
+
+  .tarot-reply-card {
+    grid-template-columns: 102px 1fr;
+    gap: 13px;
+  }
+
+  .tarot-card-frame {
+    min-height: 154px;
+  }
+
+  .tarot-card-art svg {
+    width: 72px;
+    height: 72px;
   }
 }
 
@@ -815,7 +1259,22 @@
     font-size: 7px;
   }
 
-  .empty-conversation {
-    min-height: 350px;
+  .question-message-card {
+    width: 92%;
+  }
+
+  .signal-core-wrap {
+    transform: scale(0.9);
+    margin-top: 4px;
+    margin-bottom: -5px;
+  }
+
+  .tarot-reply-card {
+    grid-template-columns: 92px 1fr;
+  }
+
+  .tarot-copy strong,
+  .gift-copy strong {
+    font-size: 15px;
   }
 }
