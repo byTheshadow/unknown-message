@@ -685,3 +685,104 @@
     font-size: 14px;
   }
 }
+/* =========================================================
+   单张字卡编辑弹窗
+   ========================================================= */
+
+.card-edit-dialog {
+  width: min(100%, 500px);
+}
+
+.card-edit-dialog .dialog-field textarea {
+  min-height: 132px;
+  max-height: min(42svh, 300px);
+  font-size: 14px;
+  letter-spacing: 0.05em;
+}
+
+.card-edit-dialog .dialog-note {
+  min-height: 38px;
+}
+
+.card-edit-dialog .solid-button {
+  min-width: 98px;
+}
+
+@media (max-width: 520px) {
+  .card-edit-dialog {
+    padding: 18px;
+  }
+
+  .card-edit-dialog .dialog-field textarea {
+    min-height: 118px;
+  }
+}
+.custom-card-list {
+  display: grid;
+}
+
+.custom-card-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 11px 14px;
+  border-bottom: 1px solid rgba(17, 17, 17, 0.08);
+}
+
+.custom-card-row:last-child {
+  border-bottom: 0;
+}
+
+.custom-card-copy {
+  flex: 1;
+  min-width: 0;
+  overflow-wrap: anywhere;
+  color: var(--ink-soft);
+  font-size: 12px;
+  line-height: 1.5;
+  letter-spacing: 0.04em;
+}
+
+.custom-card-actions {
+  display: flex;
+  flex: 0 0 auto;
+  gap: 6px;
+}
+
+.card-mini-button {
+  min-height: 31px;
+  padding: 0 9px;
+  border: 1px solid var(--line-strong);
+  border-radius: 5px;
+  color: var(--ink);
+  background: rgba(255, 255, 255, 0.26);
+  font-size: 9px;
+  letter-spacing: 0.08em;
+  cursor: pointer;
+}
+
+.card-mini-button.is-danger {
+  color: rgba(17, 17, 17, 0.56);
+}
+
+.card-mini-button:hover,
+.card-mini-button:focus-visible {
+  border-color: var(--ink);
+  background: rgba(255, 255, 255, 0.8);
+  outline: none;
+}
+
+.empty-custom-cards {
+  padding: 24px 14px;
+  color: var(--ink-muted);
+  font-size: 12px;
+  letter-spacing: 0.05em;
+  text-align: center;
+}
+
+@media (max-width: 520px) {
+  .custom-card-row {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+}

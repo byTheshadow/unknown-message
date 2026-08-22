@@ -33,6 +33,7 @@ const importTextarea = document.querySelector("#importTextarea");
 const importResult = document.querySelector("#importResult");
 
 let settings = getSettings();
+
 let editingCategoryName = null;
 
 let editingCard = {
@@ -42,12 +43,18 @@ let editingCard = {
 
 function escapeHtml(value) {
   const element = document.createElement("div");
+
   element.textContent = String(value ?? "");
+
   return element.innerHTML;
 }
 
 function formatWaitTime(seconds) {
-  const safeSeconds = Math.max(30, Math.min(900, Number(seconds) || 300));
+  const safeSeconds = Math.max(
+    30,
+    Math.min(900, Number(seconds) || 300)
+  );
+
   const minutes = String(Math.floor(safeSeconds / 60)).padStart(2, "0");
   const remainder = String(safeSeconds % 60).padStart(2, "0");
 
@@ -88,7 +95,9 @@ function ensureActiveCategoriesAreValid() {
 
   settings.activeCategories = [
     ...new Set(
-      (settings.activeCategories || []).filter((name) => validNames.has(name))
+      (settings.activeCategories || []).filter((name) =>
+        validNames.has(name)
+      )
     )
   ];
 }
@@ -105,7 +114,11 @@ function updateWaitRangeVisual() {
 
   const progress = ((current - minimum) / (maximum - minimum)) * 100;
 
-  waitSecondsRange.style.setProperty("--range-progress", `${progress}%`);
+  waitSecondsRange.style.setProperty(
+    "--range-progress",
+    `${progress}%`
+  );
+
   waitSecondsOutput.textContent = formatWaitTime(current);
 }
 
@@ -137,7 +150,9 @@ function renderCategoryToggles() {
         <label class="category-toggle-row">
           <span class="category-toggle-name">
             <strong>${escapeHtml(name)}</strong>
-            <span>${isBuiltIn ? "BUILT-IN" : "CUSTOM"} / ${cards.length} CARDS</span>
+            <span>
+              ${isBuiltIn ? "BUILT-IN" : "CUSTOM"} / ${cards.length} CARDS
+            </span>
           </span>
 
           <span class="toggle-control">
@@ -178,7 +193,9 @@ function renderCustomCategories() {
         ? cards
           .map((card) => `
             <div class="custom-card-row">
-              <span class="custom-card-copy">${escapeHtml(card)}</span>
+              <span class="custom-card-copy">
+                ${escapeHtml(card)}
+              </span>
 
               <div class="custom-card-actions">
                 <button
@@ -261,6 +278,7 @@ function renderImportCategoryOptions() {
 
 function renderAll() {
   ensureActiveCategoriesAreValid();
+
   renderWaitControl();
   renderCategoryToggles();
   renderCustomCategories();
@@ -297,6 +315,7 @@ function openCategoryDialog(categoryName = null) {
 function closeCategoryDialog() {
   categoryDialogLayer.classList.add("is-hidden");
   categoryForm.reset();
+
   editingCategoryName = null;
 }
 
@@ -307,8 +326,9 @@ function openCardDialog(categoryName, card) {
   };
 
   cardContentInput.value = card;
+
   cardDialogNote.textContent =
-    "内容会自动清理首尾空格，且不能与已有字卡重复。";
+    "保存时会自动清理首尾空格；内容不能与已有内置或自定义字卡重复。";
 
   cardDialogLayer.classList.remove("is-hidden");
 
@@ -331,6 +351,10 @@ function closeCardDialog() {
 function openImportDialog() {
   const categoryNames = getCustomCategoryNames();
 
+  /*
+    尚未创建分类时，不展示无法选择导入目标的弹窗，
+    直接引导用户先创建分类。
+  */
   if (!categoryNames.length) {
     openCategoryDialog();
     return;
@@ -351,6 +375,7 @@ function openImportDialog() {
 function closeImportDialog() {
   importDialogLayer.classList.add("is-hidden");
   importForm.reset();
+
   importResult.textContent = "";
 }
 
@@ -374,7 +399,9 @@ function createOrRenameCategory(event) {
     builtInNames.has(nextName) ||
     (customNames.has(nextName) && !isSameName)
   ) {
-    categoryDialogNote.textContent = "该分类名称已经存在，请使用其他名称。";
+    categoryDialogNote.textContent =
+      "该分类名称已经存在，请使用其他名称。";
+
     categoryNameInput.focus();
     return;
   }
@@ -383,6 +410,7 @@ function createOrRenameCategory(event) {
     const cards = settings.customCategories[editingCategoryName] || [];
 
     delete settings.customCategories[editingCategoryName];
+
     settings.customCategories[nextName] = cards;
 
     settings.activeCategories = settings.activeCategories.map((name) =>
@@ -436,11 +464,17 @@ function saveEditedCard(event) {
     return;
   }
 
+  /*
+    编辑成新内容时，做全局去重：
+    内置字卡、其他自定义分类、当前分类其他字卡均不可重复。
+  */
   if (nextCard !== originalCard) {
     const allCards = getAllCards();
 
     if (allCards.has(nextCard)) {
-      cardDialogNote.textContent = "该字卡内容已经存在，无法重复保存。";
+      cardDialogNote.textContent =
+        "该字卡内容已经存在，无法重复保存。";
+
       cardContentInput.focus();
       return;
     }
@@ -498,6 +532,13 @@ function importCards(event) {
     return;
   }
 
+  /*
+    一行一张：
+    - 清理每行首尾空格；
+    - 过滤空行；
+    - 先对本次输入自身去重；
+    - 再与全部内置、自定义字卡做全局去重。
+  */
   const inputCards = importTextarea.value
     .split(/\r?\n/)
     .map((line) => line.trim())
@@ -525,7 +566,10 @@ function importCards(event) {
 
   importTextarea.value = "";
 
-  const skippedCount = Math.max(0, inputCards.length - acceptedCards.length);
+  const skippedCount = Math.max(
+    0,
+    inputCards.length - acceptedCards.length
+  );
 
   importResult.textContent =
     `成功导入 ${acceptedCards.length} 张字卡；` +
@@ -556,7 +600,10 @@ function initialize() {
 
     if (input.checked) {
       settings.activeCategories = [
-        ...new Set([...settings.activeCategories, categoryName])
+        ...new Set([
+          ...settings.activeCategories,
+          categoryName
+        ])
       ];
     } else {
       settings.activeCategories = settings.activeCategories.filter(
@@ -580,9 +627,17 @@ function initialize() {
 
   customCategoryList.addEventListener("click", (event) => {
     const renameButton = event.target.closest("[data-rename-category]");
-    const deleteCategoryButton = event.target.closest("[data-delete-category]");
-    const editCardButton = event.target.closest("[data-edit-card-category]");
-    const deleteCardButton = event.target.closest("[data-delete-card-category]");
+    const deleteCategoryButton = event.target.closest(
+      "[data-delete-category]"
+    );
+
+    const editCardButton = event.target.closest(
+      "[data-edit-card-category]"
+    );
+
+    const deleteCardButton = event.target.closest(
+      "[data-delete-card-category]"
+    );
 
     if (renameButton) {
       openCategoryDialog(renameButton.dataset.renameCategory);

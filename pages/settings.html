@@ -288,6 +288,79 @@
         </form>
       </section>
     </div>
+
+    <!-- 单张字卡编辑 -->
+<div
+  class="settings-layer is-hidden"
+  id="cardDialogLayer"
+  role="dialog"
+  aria-modal="true"
+  aria-labelledby="cardDialogTitle"
+>
+  <div class="settings-backdrop" data-close-card-dialog="true"></div>
+
+  <section class="settings-dialog card-edit-dialog">
+    <header class="dialog-header">
+      <div>
+        <span>EDIT CARD / LOCAL ONLY</span>
+        <strong id="cardDialogTitle">编辑字卡</strong>
+      </div>
+
+      <button
+        class="dialog-close-button"
+        type="button"
+        data-close-card-dialog="true"
+        aria-label="关闭编辑字卡弹窗"
+      >
+        <svg
+          viewBox="0 0 24 24"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+          aria-hidden="true"
+        >
+          <path
+            d="M6 6L18 18M18 6L6 18"
+            stroke="currentColor"
+            stroke-width="1.4"
+            stroke-linecap="round"
+          />
+        </svg>
+      </button>
+    </header>
+
+    <form id="cardForm">
+      <label class="dialog-field">
+        <span>字卡内容</span>
+
+        <textarea
+          id="cardContentInput"
+          rows="4"
+          maxlength="160"
+          placeholder="写下这张字卡"
+        ></textarea>
+      </label>
+
+      <p class="dialog-note" id="cardDialogNote">
+        保存时会自动清理首尾空格；内容不能与已有内置或自定义字卡重复。
+      </p>
+
+      <div class="dialog-actions">
+        <button
+          class="text-button"
+          type="button"
+          data-close-card-dialog="true"
+        >
+          取消
+        </button>
+
+        <button class="solid-button" type="submit">
+          保存修改
+        </button>
+      </div>
+    </form>
+  </section>
+</div>
+
   </main>
 
   <script type="module" src="../js/settings.js"></script>
