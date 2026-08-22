@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, viewport-fit=cover"
+    />
+    <meta name="theme-color" content="#f4f4f1" />
+    <title>提问箱 · 未读信号</title>
+
+    <link rel="stylesheet" href="./css/common.css" />
+    <link rel="stylesheet" href="./css/question.css" />
+  </head>
+
+  <body>
+    <main class="page-shell">
+      <header class="page-header">
+        <a class="back-button" href="./index.html" aria-label="返回首页">
+          <svg
+            viewBox="0 0 24 24"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+            aria-hidden="true"
+          >
+            <path
+              d="M19 12H5M10 7L5 12L10 17"
+              stroke="currentColor"
+              stroke-width="1.5"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+          </svg>
+          <span>返回</span>
+        </a>
+
+        <div class="page-number">QUESTION / 01</div>
+      </header>
+
+      <section class="question-page-content">
+        <div class="page-heading">
+          <p class="page-eyebrow">QUESTION BOX</p>
+          <h1>写下你想问的。</h1>
+          <p class="page-description">
+            问题将从当前设备发出。请确认内容后再继续。
+          </p>
+        </div>
+
+        <form id="question-form" class="question-form" novalidate>
+          <div class="field-group">
+            <label for="target-name">提问对象</label>
+
+            <input
+              id="target-name"
+              name="targetName"
+              type="text"
+              maxlength="24"
+              autocomplete="off"
+              placeholder="填写姓名或称呼"
+            />
+
+            <div id="target-history" class="target-history" hidden>
+              <p>最近使用</p>
+              <div id="target-history-list" class="target-history-list"></div>
+            </div>
+          </div>
+
+          <div class="field-group">
+            <div class="label-row">
+              <label for="question-content">你的问题</label>
+              <span id="question-counter">0 / 120</span>
+            </div>
+
+            <textarea
+              id="question-content"
+              name="questionContent"
+              maxlength="120"
+              rows="5"
+              placeholder="在这里输入问题"
+            ></textarea>
+          </div>
+
+          <p id="form-message" class="form-message" aria-live="polite"></p>
+
+          <button class="submit-button" type="submit">
+            <span>发出问题</span>
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+              aria-hidden="true"
+            >
+              <path
+                d="M5 12H18M13 7L18 12L13 17"
+                stroke="currentColor"
+                stroke-width="1.5"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
+            </svg>
+          </button>
+        </form>
+      </section>
+
+      <footer class="page-footer">
+        <span>MESSAGE DRAFT / LOCAL</span>
+        <span id="duration-preview">MAX WAIT / 05:00</span>
+      </footer>
+    </main>
+
+    <script src="./js/app.js"></script>
+    <script src="./js/question.js"></script>
+  </body>
+</html>

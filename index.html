@@ -7,31 +7,180 @@
       content="width=device-width, initial-scale=1, viewport-fit=cover"
     />
     <meta name="theme-color" content="#f4f4f1" />
-
     <title>未读信号 · UNKNOWN MESSAGE</title>
 
-    <link rel="stylesheet" href="./styles/base.css" />
-    <link rel="stylesheet" href="./styles/loading.css" />
-    <link rel="stylesheet" href="./styles/home.css" />
-    <link rel="stylesheet" href="./styles/question.css" />
-    <link rel="stylesheet" href="./styles/transmission.css" />
-    <link rel="stylesheet" href="./styles/transition.css" />
+    <link rel="stylesheet" href="./css/common.css" />
+    <link rel="stylesheet" href="./css/index.css" />
   </head>
 
   <body>
-    <div id="app"></div>
+    <!-- 加载层：应用首次进入时显示 -->
+    <section id="loading-screen" class="loading-screen" aria-label="正在加载">
+      <div class="grain" aria-hidden="true"></div>
+      <div class="ambient" aria-hidden="true"></div>
 
-    <script src="./scripts/storage.js"></script>
-    <script src="./scripts/state.js"></script>
-    <script src="./scripts/utils/time.js"></script>
+      <div class="loading-frame" aria-hidden="true">
+        <span class="frame-corner corner-tl"></span>
+        <span class="frame-corner corner-tr"></span>
+        <span class="frame-corner corner-bl"></span>
+        <span class="frame-corner corner-br"></span>
+      </div>
 
-    <script src="./scripts/components/loading.js"></script>
-    <script src="./scripts/components/home.js"></script>
-    <script src="./scripts/components/question.js"></script>
-    <script src="./scripts/components/transmission.js"></script>
+      <header class="loading-header">
+        <div class="status-item">
+          <span class="status-dot"></span>
+          <span>CHANNEL / OPEN</span>
+        </div>
 
-    <script src="./scripts/router.js"></script>
-    <script src="./scripts/app.js"></script>
+        <div class="status-item">
+          <span class="signal-bars" aria-hidden="true">
+            <i></i><i></i><i></i><i></i><i></i>
+          </span>
+          <span>LINE 01</span>
+        </div>
+      </header>
+
+      <div class="signal-core-area">
+        <div class="orbit orbit-one"></div>
+        <div class="orbit orbit-two"></div>
+        <div class="orbit orbit-three"></div>
+
+        <div class="beam beam-one"></div>
+        <div class="beam beam-two"></div>
+        <div class="beam beam-three"></div>
+        <div class="beam beam-four"></div>
+        <div class="beam beam-five"></div>
+
+        <div class="signal-core" aria-hidden="true">
+          <!-- 抽象信号节点 SVG：不使用 Emoji -->
+          <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="32" cy="32" r="4" fill="currentColor" />
+
+            <path
+              d="M21.8 21.8C16.2 27.4 16.2 36.6 21.8 42.2"
+              stroke="currentColor"
+              stroke-width="1.6"
+              stroke-linecap="round"
+            />
+            <path
+              d="M42.2 21.8C47.8 27.4 47.8 36.6 42.2 42.2"
+              stroke="currentColor"
+              stroke-width="1.6"
+              stroke-linecap="round"
+            />
+
+            <path
+              d="M15.3 15.3C6.2 24.4 6.2 39.6 15.3 48.7"
+              stroke="currentColor"
+              stroke-width="1.35"
+              stroke-linecap="round"
+              opacity="0.65"
+            />
+            <path
+              d="M48.7 15.3C57.8 24.4 57.8 39.6 48.7 48.7"
+              stroke="currentColor"
+              stroke-width="1.35"
+              stroke-linecap="round"
+              opacity="0.65"
+            />
+          </svg>
+        </div>
+
+        <div class="loading-copy">
+          <h1>正在建立连接</h1>
+          <p>INITIALIZING TRANSMISSION CHANNEL</p>
+        </div>
+
+        <div class="loading-progress" aria-hidden="true"></div>
+      </div>
+
+      <footer class="loading-footer">
+        <span>LOCAL INTERFACE · READY</span>
+        <span id="loading-clock">00:00:00</span>
+      </footer>
+    </section>
+
+    <!-- 主入口：首页只保留提问箱与设置 -->
+    <main id="home-screen" class="home-screen is-hidden">
+      <div class="home-background" aria-hidden="true"></div>
+
+      <header class="app-header">
+        <a class="brand" href="./index.html" aria-label="返回未读信号首页">
+          <span class="brand-title">未读信号</span>
+          <span class="brand-subtitle">UNKNOWN MESSAGE</span>
+        </a>
+
+        <span class="header-code">UM / 01</span>
+      </header>
+
+      <section class="home-content">
+        <p class="home-eyebrow">A RANDOM MESSAGE INTERFACE</p>
+
+        <h1 class="home-title">
+          留下一条问题，<br />
+          等待它被接收。
+        </h1>
+
+        <nav class="home-actions" aria-label="主菜单">
+          <a class="entry-card entry-card-primary" href="./question.html">
+            <span class="entry-index">01</span>
+
+            <span class="entry-main">
+              <span class="entry-title">提问箱</span>
+              <span class="entry-description">发出一条新的问题</span>
+            </span>
+
+            <svg
+              class="entry-arrow"
+              viewBox="0 0 24 24"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+              aria-hidden="true"
+            >
+              <path
+                d="M5 12H18M13 7L18 12L13 17"
+                stroke="currentColor"
+                stroke-width="1.5"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
+            </svg>
+          </a>
+
+          <a class="entry-card" href="./settings.html">
+            <span class="entry-index">02</span>
+
+            <span class="entry-main">
+              <span class="entry-title">设置</span>
+              <span class="entry-description">时长与字卡分类</span>
+            </span>
+
+            <svg
+              class="entry-arrow"
+              viewBox="0 0 24 24"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+              aria-hidden="true"
+            >
+              <path
+                d="M5 12H18M13 7L18 12L13 17"
+                stroke="currentColor"
+                stroke-width="1.5"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
+            </svg>
+          </a>
+        </nav>
+      </section>
+
+      <footer class="app-footer">
+        <span>OFFLINE · LOCAL ONLY</span>
+        <span>NO. 2026</span>
+      </footer>
+    </main>
+
+    <script src="./js/app.js"></script>
+    <script src="./js/index.js"></script>
   </body>
 </html>
-
