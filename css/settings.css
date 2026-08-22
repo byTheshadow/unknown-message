@@ -1,7 +1,9 @@
 .settings-page {
   position: relative;
-  min-height: 100svh;
-  overflow: hidden;
+  height: 100svh;         /* 占满屏幕视口高度 */
+  overflow-y: auto;       /* 允许纵向滑动 */
+  overflow-x: hidden;     /* 隐藏横向溢出 */
+  -webkit-overflow-scrolling: touch; /* 提升手机端滑动顺滑度 */
   padding:
     max(20px, env(safe-area-inset-top))
     max(20px, env(safe-area-inset-right))
