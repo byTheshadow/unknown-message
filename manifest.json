@@ -1,0 +1,64 @@
+
+{
+  "name": "未读信号",
+  "englishName": "UNKNOWN-MESSAGE",
+  "version": "1.0.0",
+  "description": "一款本地运行的极简随机字卡互动工具。用户可写下一个问题或对象，在设定的等待时间内接收由随机字卡组成的趣味回应。内容仅供娱乐与灵感记录使用。",
+  "category": "工具",
+  "tags": [
+    "随机字卡",
+    "文字互动",
+    "灵感记录",
+    "娱乐工具",
+    "离线工具"
+  ],
+  "entry": "index.html",
+  "pages": [
+    {
+      "path": "index.html",
+      "title": "未读信号"
+    },
+    {
+      "path": "pages/question.html",
+      "title": "提问箱"
+    },
+    {
+      "path": "pages/settings.html",
+      "title": "设置"
+    }
+  ],
+  "capabilities": {
+    "network": false,
+    "offline": true,
+    "localStorage": true,
+    "clipboard": false,
+    "fileImport": false,
+    "camera": false,
+    "microphone": false,
+    "location": false,
+    "photoLibrary": false
+  },
+  "dataPolicy": {
+    "collectsUserData": false,
+    "uploadsUserData": false,
+    "usesLocalStorage": true,
+    "localStoragePurpose": [
+      "保存用户设置",
+      "保存自定义字卡分类与内容",
+      "保存当前设备内的提问记录与等待状态",
+      "保存提问对象草稿"
+    ],
+    "dataRetention": "所有内容仅保留在用户当前设备的浏览器本地存储中；用户可通过清除记录或清除浏览器数据删除。"
+  },
+  "contentNotice": {
+    "type": "entertainment",
+    "statement": "本工具为随机文字卡片互动与灵感记录用途，所有内容均由本地随机机制生成，仅供娱乐参考，不构成任何建议、判断、预测或承诺。"
+  },
+  "permissions": [],
+  "externalResources": {
+    "usesExternalFonts": false,
+    "usesExternalImages": false,
+    "usesExternalScripts": false,
+    "usesCDN": false
+  }
+}
