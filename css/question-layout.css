@@ -287,10 +287,25 @@ body {
 
 .composer-drawer-content {
   display: grid;
-  grid-template-rows: 1fr;
-  max-height: 510px;
+  grid-template-rows: minmax(0, 1fr);
+
+  /*
+    抽屉内容最大高度：
+    总抽屉上限 - 顶部抽屉控制条 - 底部安全区域。
+    小屏幕时，内容区会在此范围内独立滚动。
+  */
+  max-height: calc(
+    min(68svh, 620px) - 66px - max(12px, env(safe-area-inset-bottom))
+  );
+
+  min-height: 0;
   padding: 18px 18px 12px;
-  overflow: hidden;
+  overflow-x: hidden;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+
   opacity: 1;
   transform: translateY(0);
   transition:
@@ -299,6 +314,11 @@ body {
     opacity 0.2s ease,
     transform 0.32s ease;
 }
+
+.composer-drawer-content::-webkit-scrollbar {
+  display: none;
+}
+
 
 /* 收束后的抽屉仅保留控制按钮 */
 
@@ -395,11 +415,14 @@ body {
     padding-left: 20px;
   }
 
-  .composer-drawer-content {
-    max-height: 560px;
-    padding-right: 14px;
-    padding-left: 14px;
-  }
+.composer-drawer-content {
+  max-height: calc(
+    min(70svh, 560px) - 62px - max(12px, env(safe-area-inset-bottom))
+  );
+  padding-right: 14px;
+  padding-left: 14px;
+}
+
 
   .question-form {
     grid-template-columns: 1fr;
