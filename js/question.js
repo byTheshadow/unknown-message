@@ -1208,9 +1208,7 @@ function initialize() {
     }
   });
 
-  waitSettingLink.addEventListener("click", () => {
-    window.location.href = "./settings.html";
-  });
+  // 删除了原本的 window.location.href 跳转逻辑
 
   document.addEventListener("visibilitychange", () => {
     if (!document.hidden) {
@@ -1219,4 +1217,14 @@ function initialize() {
   });
 }
 
+// 导出刷新函数，供 SPA 切页时调用
+export function refreshQuestionPage() {
+  updateWaitTimeLabel();
+  renderResponseCategoryOptions();
+  renderConversation();
+  scheduleActiveSession();
+}
+
+// 保持原本的初始化调用
 initialize();
+

@@ -1,3 +1,6 @@
+import { refreshQuestionPage } from "./question.js";
+import { refreshSettingsPage } from "./settings.js";
+
 (() => {
   "use strict";
 
@@ -13,24 +16,26 @@
 
   // ===== 单页面 (SPA) 路由切换控制器 =====
   function navigateTo(targetPage) {
-    // 隐藏所有页面视图
-    [homeScreen, questionPage, settingsPage].forEach(page => {
+    // 1. 隐藏所有页面视图
+    [homeScreen, questionPage, settingsPage].forEach((page) => {
       if (page) {
         page.classList.add("is-hidden");
         page.classList.remove("is-entering");
       }
     });
 
-    // 显示目标视图
+    // 2. 显示目标视图并调用刷新
     if (targetPage === "home" && homeScreen) {
       homeScreen.classList.remove("is-hidden");
       homeScreen.classList.add("is-entering");
     } else if (targetPage === "question" && questionPage) {
       questionPage.classList.remove("is-hidden");
       questionPage.classList.add("is-entering");
+      refreshQuestionPage(); // 调用提问箱刷新
     } else if (targetPage === "settings" && settingsPage) {
       settingsPage.classList.remove("is-hidden");
       settingsPage.classList.add("is-entering");
+      refreshSettingsPage(); // 调用设置页刷新
     }
   }
 
@@ -85,7 +90,7 @@
   // 初始化路由事件监听
   initRouterEvents();
 
-  // ===== 原有 Launch Animation & Session 存储逻辑 =====
+  // ===== Launch Animation & Session 存储逻辑 =====
   const BOOT_SESSION_KEY = "unknown-message.booted-in-session";
 
   function showHomeImmediately() {

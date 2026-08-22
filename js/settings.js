@@ -684,4 +684,12 @@ function initialize() {
   });
 }
 
+// 导出刷新函数，供 SPA 切页时调用
+export function refreshSettingsPage() {
+  settings = getSettings();
+  renderAll();
+}
+
+// 保持原本的初始化调用
 initialize();
+
