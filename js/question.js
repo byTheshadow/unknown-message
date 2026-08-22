@@ -36,6 +36,17 @@ const downloadButton = document.querySelector("#downloadButton");
 
 const MIN_SIGNAL_CHECK_DELAY = 800;
 const MAX_SIGNAL_CHECK_DELAY = 5200;
+
+/*
+  每次独立信号检查中，收到回应的随机机会。
+
+  注意：
+  这不是预设抵达时间；
+  不是发送时预抽结果；
+  只是每一次真实随机检测时的独立概率。
+*/
+const SIGNAL_ARRIVAL_CHANCE = 16;
+
 const RECIPIENT_DRAFT_KEY = "unknown-message.recipient-draft";
 
 
