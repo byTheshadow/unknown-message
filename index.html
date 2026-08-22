@@ -92,104 +92,128 @@
       </footer>
     </section>
 
-    <!-- 主入口 -->
-    <section class="home-screen is-hidden" id="homeScreen">
-      <div class="home-background-glow" aria-hidden="true"></div>
-      <div class="home-grain" aria-hidden="true"></div>
+<!-- 主入口 -->
+<section class="home-screen is-hidden" id="homeScreen">
+  <div class="home-background-glow" aria-hidden="true"></div>
+  <div class="home-grain" aria-hidden="true"></div>
 
-      <header class="home-header">
-        <div class="brand-lockup">
-          <span class="brand-kicker">UNKNOWN-MESSAGE</span>
-          <h1>未读信号</h1>
-        </div>
+  <div class="home-rule home-rule-top" aria-hidden="true"></div>
+  <div class="home-rule home-rule-side" aria-hidden="true"></div>
 
-        <span class="brand-index">NO. 001</span>
-      </header>
+  <header class="home-header">
+    <div class="brand-lockup">
+      <span class="brand-kicker">UNKNOWN-MESSAGE</span>
+      <h1>未读<br />信号</h1>
+    </div>
 
-      <main class="home-main">
-        <div class="home-intro">
-          <p class="home-overline">A PRIVATE MESSAGE INTERFACE</p>
+    <div class="home-edition">
+      <span>PRIVATE EDITION</span>
+      <strong>NO. 001</strong>
+      <span>LOCAL / OFFLINE</span>
+    </div>
+  </header>
+
+  <main class="home-main">
+    <section class="home-cover-copy" aria-label="应用介绍">
+      <p class="home-overline">A PLACE FOR THE UNSAID</p>
+
+      <div class="home-title-row">
+        <span class="home-title-number">01</span>
+
+        <div>
+          <h2>有些话，<br />适合留给等待。</h2>
           <p class="home-description">
-            选择一个入口，开始一次随机回应。
+            写下一条问题，让它穿过一段安静的时间，
+            等待一段未被预先写好的回讯。
           </p>
         </div>
+      </div>
 
-        <nav class="home-navigation" aria-label="主导航">
-          <a
-            class="home-entry home-entry-primary"
-            href="./pages/question.html"
-          >
-            <span class="entry-number">01</span>
-
-            <span class="entry-content">
-              <strong>提问箱</strong>
-              <small>ASK A QUESTION</small>
-            </span>
-
-            <span class="entry-arrow" aria-hidden="true">
-              <svg
-                viewBox="0 0 24 24"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  d="M5 12H19"
-                  stroke="currentColor"
-                  stroke-width="1.4"
-                  stroke-linecap="round"
-                />
-                <path
-                  d="M13 6L19 12L13 18"
-                  stroke="currentColor"
-                  stroke-width="1.4"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                />
-              </svg>
-            </span>
-          </a>
-
-          <a
-            class="home-entry"
-            href="./pages/settings.html"
-          >
-            <span class="entry-number">02</span>
-
-            <span class="entry-content">
-              <strong>设置</strong>
-              <small>CONFIGURATION</small>
-            </span>
-
-            <span class="entry-arrow" aria-hidden="true">
-              <svg
-                viewBox="0 0 24 24"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  d="M5 12H19"
-                  stroke="currentColor"
-                  stroke-width="1.4"
-                  stroke-linecap="round"
-                />
-                <path
-                  d="M13 6L19 12L13 18"
-                  stroke="currentColor"
-                  stroke-width="1.4"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                />
-              </svg>
-            </span>
-          </a>
-        </nav>
-      </main>
-
-      <footer class="home-footer">
+      <div class="home-caption-row">
+        <span>ISSUE / A QUIET TRANSMISSION</span>
         <span>ALL SIGNALS ARE RANDOM</span>
-        <span>LOCAL / OFFLINE</span>
-      </footer>
+      </div>
     </section>
+
+    <nav class="home-navigation" aria-label="主导航">
+      <a
+        class="home-entry home-entry-primary"
+        href="./pages/question.html"
+      >
+        <span class="entry-number">01</span>
+
+        <span class="entry-content">
+          <small>OPEN A PRIVATE CHANNEL</small>
+          <strong>提问箱</strong>
+          <em>写下一件想被听见的事</em>
+        </span>
+
+        <span class="entry-arrow" aria-hidden="true">
+          <svg
+            viewBox="0 0 24 24"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M5 12H19"
+              stroke="currentColor"
+              stroke-width="1.4"
+              stroke-linecap="round"
+            />
+            <path
+              d="M13 6L19 12L13 18"
+              stroke="currentColor"
+              stroke-width="1.4"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+          </svg>
+        </span>
+      </a>
+
+      <a
+        class="home-entry home-entry-secondary"
+        href="./pages/settings.html"
+      >
+        <span class="entry-number">02</span>
+
+        <span class="entry-content">
+          <small>ADJUST THE WINDOW</small>
+          <strong>设置</strong>
+          <em>调整等待与字卡的范围</em>
+        </span>
+
+        <span class="entry-arrow" aria-hidden="true">
+          <svg
+            viewBox="0 0 24 24"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M5 12H19"
+              stroke="currentColor"
+              stroke-width="1.4"
+              stroke-linecap="round"
+            />
+            <path
+              d="M13 6L19 12L13 18"
+              stroke="currentColor"
+              stroke-width="1.4"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+          </svg>
+        </span>
+      </a>
+    </nav>
+  </main>
+
+  <footer class="home-footer">
+    <span>未读信号 / UNKNOWN-MESSAGE</span>
+    <span>NO NETWORK · NO PREWRITTEN REPLY</span>
+  </footer>
+</section>
+
   </div>
 
   <script src="./js/app.js"></script>
