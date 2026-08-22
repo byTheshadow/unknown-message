@@ -411,4 +411,134 @@ export const giftItems = [
     name: "一支还未削完的铅笔",
     svg: `<svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg"><path d="M20 45l25-25 6 6-25 25-9 2 3-8z"/><path d="M40 25l6 6M20 45l6 6M45 20l3-3 6 6-3 3"/></svg>`
   },
+  {
+  id: "tin-tea-box",
+  name: "一只旧铁茶罐",
+  svg: `<svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg"><rect x="20" y="18" width="24" height="34" rx="3"/><path d="M23 18c2-4 16-4 18 0"/><path d="M22 27h20M22 43h20"/><path d="M28 34h8"/></svg>`
+},
+{
+  id: "porcelain-saucer",
+  name: "一只瓷碟",
+  svg: `<svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg"><path d="M16 36c3 8 29 8 32 0"/><path d="M19 34c4-6 22-6 26 0"/><path d="M24 32c3 3 13 3 16 0"/><path d="M22 45h20"/></svg>`
+},
+{
+  id: "linen-handkerchief",
+  name: "一方亚麻手帕",
+  svg: `<svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg"><path d="M18 17h28v30H18z"/><path d="M24 17v30M18 24h28"/><path d="M24 41c5-4 11-4 16 0"/><path d="M46 17l-6 6h6"/></svg>`
+},
+{
+  id: "thread-spool",
+  name: "一轴灰线",
+  svg: `<svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg"><path d="M24 18h16l-3 6H27l-3-6z"/><path d="M27 24h10v20H27z"/><path d="M24 50h16l-3-6H27l-3 6z"/><path d="M27 30c4-2 6 2 10 0M27 36c4-2 6 2 10 0"/></svg>`
+},
+{
+  id: "wooden-clothespin",
+  name: "一枚木衣夹",
+  svg: `<svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg"><path d="M24 14l16 36M40 14L24 50"/><path d="M28 23h8M29 41h6"/><circle cx="32" cy="32" r="4"/><path d="M22 52h20"/></svg>`
+},
+{
+  id: "map-fragment",
+  name: "一角旧地图",
+  svg: `<svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg"><path d="M17 18l11-4 12 5 8-3v30l-11 4-12-5-8 3V18z"/><path d="M28 14v31M40 19v31"/><path d="M21 28c5-2 8 3 12 1 5-2 7-6 12-5"/><circle cx="34" cy="36" r="2"/></svg>`
+},
+{
+  id: "metal-bookmark",
+  name: "一枚金属书签",
+  svg: `<svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg"><path d="M25 14h14v38l-7-6-7 6V14z"/><path d="M29 20h6M29 26h6"/><circle cx="32" cy="36" r="3"/></svg>`
+},
+{
+  id: "bent-paperclip",
+  name: "一枚弯曲回形针",
+  svg: `<svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg"><path d="M24 41l13-18c3-4 9 0 6 5L29 48c-5 7-15 0-10-7l16-23c6-8 19 1 13 10L34 48"/><path d="M24 41l13-18"/></svg>`
+},
+{
+  id: "soft-eraser",
+  name: "一块软橡皮",
+  svg: `<svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg"><path d="M20 26l11-10 17 18-12 13H20V26z"/><path d="M20 26l17 18M31 16l17 18"/><path d="M18 47h22"/></svg>`
+},
+{
+  id: "short-ruler",
+  name: "一把短尺",
+  svg: `<svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg"><rect x="14" y="25" width="36" height="14" rx="2"/><path d="M20 25v6M26 25v4M32 25v6M38 25v4M44 25v6"/><path d="M18 45h28"/></svg>`
+},
+{
+  id: "ink-bottle",
+  name: "一只旧墨水瓶",
+  svg: `<svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg"><path d="M26 15h12v8l6 8v16c0 4-3 6-7 6H27c-4 0-7-2-7-6V31l6-8v-8z"/><path d="M25 23h14M22 36h20"/><path d="M27 42h10"/></svg>`
+},
+{
+  id: "pen-cap",
+  name: "一枚钢笔笔帽",
+  svg: `<svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg"><path d="M28 15h12v34c0 3-2 5-5 5h-2c-3 0-5-2-5-5V15z"/><path d="M28 21h12"/><path d="M40 23h5v20c0 3-2 5-5 5"/><path d="M31 54h6"/></svg>`
+},
+{
+  id: "faded-stamp",
+  name: "一枚褪色邮票",
+  svg: `<svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg"><path d="M18 18h28v28H18z"/><path d="M18 23h-3M18 29h-3M18 35h-3M18 41h-3M46 23h3M46 29h3M46 35h3M46 41h3"/><circle cx="32" cy="30" r="5"/><path d="M23 40c5-5 13-5 18 0"/></svg>`
+},
+{
+  id: "luggage-tag",
+  name: "一只行李牌",
+  svg: `<svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg"><path d="M25 16h18l6 6v28H21V20l4-4z"/><circle cx="32" cy="23" r="3"/><path d="M32 20c0-7-11-7-11 0"/><path d="M27 35h16M27 42h10"/></svg>`
+},
+{
+  id: "small-seashell",
+  name: "一枚小贝壳",
+  svg: `<svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg"><path d="M16 42c3-15 12-25 16-25s13 10 16 25c-7 7-25 7-32 0z"/><path d="M32 17v32M24 25c2 8 2 15 0 22M40 25c-2 8-2 15 0 22"/><path d="M19 42h26"/></svg>`
+},
+{
+  id: "quiet-pinecone",
+  name: "一颗安静松果",
+  svg: `<svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg"><path d="M32 14c9 8 14 18 12 29-2 8-8 12-12 12s-10-4-12-12c-2-11 3-21 12-29z"/><path d="M32 20l-7 8 7 5 7-5-7-8zM25 34l7 5 7-5M23 42l9 6 9-6"/><path d="M28 17h8"/></svg>`
+},
+{
+  id: "fallen-acorn",
+  name: "一颗落下的橡子",
+  svg: `<svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg"><path d="M22 28c0 12 5 23 10 23s10-11 10-23H22z"/><path d="M20 26c4-7 20-7 24 0 0 4-24 4-24 0z"/><path d="M32 19v-6M32 13c4 1 7 3 9 6"/></svg>`
+},
+{
+  id: "loose-feather",
+  name: "一根松散羽毛",
+  svg: `<svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg"><path d="M45 15C29 17 18 29 20 49c15-4 25-16 25-34z"/><path d="M20 49l25-34"/><path d="M28 36l-7-1M33 30l-9-3M37 25l-7-4M31 41l-6 5"/></svg>`
+},
+{
+  id: "candle-stub",
+  name: "一截蜡烛头",
+  svg: `<svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg"><path d="M24 30h16v22H24z"/><path d="M24 35c4 3 12-3 16 0"/><path d="M32 30v-6"/><path d="M32 13c5 5 3 10 0 11-4-2-4-7 0-11z"/><path d="M20 52h24"/></svg>`
+},
+{
+  id: "tea-strainer",
+  name: "一只茶滤勺",
+  svg: `<svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg"><circle cx="27" cy="34" r="11"/><path d="M38 34h14"/><path d="M22 30h10M21 34h12M22 38h10"/><path d="M50 31c3 2 3 4 0 6"/></svg>`
+},
+{
+  id: "drawer-pull",
+  name: "一枚旧抽屉拉手",
+  svg: `<svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg"><rect x="18" y="22" width="28" height="20" rx="2"/><path d="M24 32c0 9 16 9 16 0"/><circle cx="24" cy="32" r="2"/><circle cx="40" cy="32" r="2"/><path d="M20 48h24"/></svg>`
+},
+{
+  id: "ceramic-tile",
+  name: "一片旧瓷砖",
+  svg: `<svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg"><rect x="18" y="18" width="28" height="28" rx="2"/><path d="M18 32h28M32 18v28"/><path d="M24 24c5 3 11 3 16 0M24 40c5-3 11-3 16 0"/></svg>`
+},
+{
+  id: "spectacles-case",
+  name: "一只眼镜盒",
+  svg: `<svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg"><rect x="15" y="25" width="34" height="18" rx="9"/><path d="M21 34h22"/><path d="M25 31c4-3 10-3 14 0"/><path d="M20 48h24"/></svg>`
+},
+{
+  id: "rolled-receipt",
+  name: "一卷旧收据纸",
+  svg: `<svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg"><circle cx="26" cy="28" r="10"/><circle cx="26" cy="28" r="4"/><path d="M36 28h10v23l-4-3-4 3-4-3-4 3V37"/><path d="M38 35h5M38 41h5"/></svg>`
+},
+{
+  id: "empty-tin-tray",
+  name: "一只空铁盘",
+  svg: `<svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg"><path d="M15 34c2 10 32 10 34 0"/><path d="M18 32c4-8 24-8 28 0"/><path d="M23 32c4 3 14 3 18 0"/><path d="M20 44h24"/></svg>`
+},
+{
+  id: "cotton-ribbon",
+  name: "一段棉布缎带",
+  svg: `<svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg"><path d="M15 27c10-6 14 6 24 0 5-3 8-3 10-1v14c-10 6-14-6-24 0-5 3-8 3-10 1V27z"/><path d="M25 27v13M39 27v13"/><path d="M17 46c9-4 17 3 30-1"/></svg>`
+}
 ];
