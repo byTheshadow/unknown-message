@@ -472,3 +472,27 @@
 .home-entry em {
   color: inherit !important;
 }
+/* ===== 修正主界面 01 提问箱卡片为黑底白字 ===== */
+.home-entry-primary {
+  background: var(--ink) !important;       /* 纯黑背景 */
+  color: #ffffff !important;               /* 纯白文字 */
+  border-color: var(--ink) !important;
+}
+
+/* 提问箱内部文字颜色细调 */
+.home-entry-primary .entry-number,
+.home-entry-primary strong {
+  color: #ffffff !important;
+}
+
+.home-entry-primary small {
+  color: rgba(255, 255, 255, 0.55) !important;
+}
+
+.home-entry-primary em {
+  color: rgba(255, 255, 255, 0.75) !important;
+}
+
+.home-entry-primary .entry-arrow {
+  color: #ffffff !important;
+}

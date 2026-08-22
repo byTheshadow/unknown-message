@@ -1321,3 +1321,24 @@
     font-size: 15px;
   }
 }
+/* ===== 修正提问抽屉按钮内部布局与间距 ===== */
+.drawer-toggle {
+  display: flex !important;
+  align-items: center !important;
+  gap: 14px !important;            /* 横杠与文字拉开 14px 舒适间距 */
+  width: 100%;
+}
+
+/* 确保抽屉横杠居左且不压缩 */
+.drawer-handle {
+  flex-shrink: 0 !important;
+  margin-right: 2px !important;
+}
+
+/* 确保文字部分占据中间空间 */
+.drawer-toggle-copy {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  margin-right: auto;
+}
