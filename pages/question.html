@@ -165,6 +165,41 @@
             ></textarea>
           </label>
 
+          <div
+  class="response-category-picker"
+  id="responseCategoryPicker"
+  aria-labelledby="responseCategoryTitle"
+>
+  <div class="response-category-picker-header">
+    <div>
+      <span id="responseCategoryTitle">本次回应启用分类</span>
+      <small>仅作用于这一次发送</small>
+    </div>
+
+    <button
+      class="category-select-all-button"
+      id="selectAllCategoriesButton"
+      type="button"
+    >
+      全选
+    </button>
+  </div>
+
+  <div
+    class="response-category-options"
+    id="responseCategoryOptions"
+    aria-live="polite"
+  ></div>
+
+  <p
+    class="response-category-warning is-hidden"
+    id="responseCategoryWarning"
+  >
+    请至少保留一个字卡分类。
+  </p>
+</div>
+
+
           <div class="form-bottom">
             <span class="character-count" id="characterCount">0 / 160</span>
 

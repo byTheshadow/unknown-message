@@ -467,3 +467,120 @@ body {
     transition: none;
   }
 }
+/* =========================================================
+   本次回应分类选择
+   ========================================================= */
+
+.response-category-picker {
+  grid-column: 1 / -1;
+  margin-top: 2px;
+  padding: 12px;
+  border: 1px solid rgba(17, 17, 17, 0.14);
+  border-radius: 7px;
+  background: rgba(255, 255, 255, 0.24);
+}
+
+.response-category-picker-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 14px;
+}
+
+.response-category-picker-header > div {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.response-category-picker-header span,
+.response-category-picker-header small,
+.response-category-warning {
+  font-family: var(--font-mono);
+  font-size: 8px;
+  letter-spacing: 0.09em;
+}
+
+.response-category-picker-header span {
+  color: var(--ink-soft);
+}
+
+.response-category-picker-header small,
+.response-category-warning {
+  color: var(--ink-muted);
+}
+
+.category-select-all-button {
+  padding: 2px 0;
+  color: var(--ink-soft);
+  background: transparent;
+  font-family: var(--font-mono);
+  font-size: 8px;
+  letter-spacing: 0.1em;
+  cursor: pointer;
+}
+
+.category-select-all-button:hover,
+.category-select-all-button:focus-visible {
+  color: var(--ink);
+  outline: none;
+}
+
+.response-category-options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+  margin-top: 11px;
+}
+
+.response-category-option {
+  position: relative;
+  display: inline-flex;
+}
+
+.response-category-option input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+}
+
+.response-category-option span {
+  display: inline-flex;
+  align-items: center;
+  min-height: 28px;
+  padding: 0 9px;
+  border: 1px solid rgba(17, 17, 17, 0.16);
+  border-radius: 4px;
+  color: var(--ink-soft);
+  background: rgba(255, 255, 255, 0.24);
+  font-size: 10px;
+  letter-spacing: 0.06em;
+  cursor: pointer;
+  transition:
+    color 0.2s ease,
+    border-color 0.2s ease,
+    background 0.2s ease;
+}
+
+.response-category-option input:checked + span {
+  border-color: var(--ink);
+  color: var(--paper);
+  background: var(--ink);
+}
+
+.response-category-option input:focus-visible + span {
+  outline: 2px solid var(--ink);
+  outline-offset: 2px;
+}
+
+.response-category-warning {
+  margin: 10px 0 0;
+  color: rgba(17, 17, 17, 0.7);
+}
+
+@media (max-width: 560px) {
+  .response-category-picker {
+    padding: 11px;
+  }
+}

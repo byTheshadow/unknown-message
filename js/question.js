@@ -24,6 +24,16 @@ const questionInput = document.querySelector("#questionInput");
 const characterCount = document.querySelector("#characterCount");
 const sendButton = document.querySelector("#sendButton");
 
+const responseCategoryOptions = document.querySelector(
+  "#responseCategoryOptions"
+);
+const responseCategoryWarning = document.querySelector(
+  "#responseCategoryWarning"
+);
+const selectAllCategoriesButton = document.querySelector(
+  "#selectAllCategoriesButton"
+);
+
 const waitTimeLabel = document.querySelector("#waitTimeLabel");
 const waitSettingLink = document.querySelector("#waitSettingLink");
 const clearHistoryButton = document.querySelector("#clearHistoryButton");
@@ -190,19 +200,36 @@ function scrollConversationToBottom(smooth = true) {
   });
 }
 
-function getEnabledCards() {
+function getAllCardCategories() {
   const settings = getSettings();
 
-  const validCategories = Array.isArray(settings.activeCategories)
-    ? settings.activeCategories.filter((category) => cardCategories[category])
+  const customCategories =
+    settings.customCategories &&
+    typeof settings.customCategories === "object" &&
+    !Array.isArray(settings.customCategories)
+      ? settings.customCategories
+      : {};
+
+  return {
+    ...cardCategories,
+    ...customCategories
+  };
+}
+
+function getEnabledCards(activeCategories = []) {
+  const allCategories = getAllCardCategories();
+
+  const validCategories = Array.isArray(activeCategories)
+    ? activeCategories.filter(
+      (category) =>
+        Array.isArray(allCategories[category]) &&
+        allCategories[category].length
+    )
     : [];
 
-  const categoryNames = validCategories.length
-    ? validCategories
-    : Object.keys(cardCategories);
-
-  return categoryNames.flatMap((category) => cardCategories[category]);
+  return validCategories.flatMap((category) => allCategories[category]);
 }
+
 
 /*
   不设定固定的 1~3、1~5 数量上限。
@@ -212,8 +239,10 @@ function getEnabledCards() {
 
   因此数量只受用户实际开启的字卡池规模影响。
 */
-function createRandomCardsAtArrival() {
-  const enabledCards = getEnabledCards();
+
+
+function createRandomCardsAtArrival(activeCategories) {
+  const enabledCards = getEnabledCards(activeCategories);
 
   if (!enabledCards.length) {
     return [];
@@ -224,65 +253,82 @@ function createRandomCardsAtArrival() {
   return secureShuffle(enabledCards).slice(0, amount);
 }
 
-function createTextCardPayloadAtArrival() {
+function createTextCardPayloadAtArrival(activeCategories) {
   return {
     type: "text-cards",
-    cards: createRandomCardsAtArrival(),
+    cards: createRandomCardsAtArrival(activeCategories),
     tarot: null,
     gift: null
   };
 }
 
-function createTarotPayloadAtArrival() {
+function createTarotPayloadAtArrival(activeCategories) {
   return {
     type: "tarot",
-    cards: createRandomCardsAtArrival(),
+    cards: createRandomCardsAtArrival(activeCategories),
     tarot: chooseRandom(tarotCards),
     gift: null
   };
 }
 
-function createGiftPayloadAtArrival() {
+function createGiftPayloadAtArrival(activeCategories) {
   return {
     type: "gift",
-    cards: createRandomCardsAtArrival(),
+    cards: createRandomCardsAtArrival(activeCategories),
     tarot: null,
     gift: chooseRandom(giftItems)
   };
 }
 
-/*
-  combo 允许塔罗、礼物、字卡三者同时抵达。
-*/
-function createComboPayloadAtArrival() {
+function createComboPayloadAtArrival(activeCategories) {
   return {
     type: "combo",
-    cards: createRandomCardsAtArrival(),
+    cards: createRandomCardsAtArrival(activeCategories),
     tarot: chooseRandom(tarotCards),
     gift: chooseRandom(giftItems)
   };
 }
 
-/*
-  只在信号真正抵达的当刻执行。
+function createReplyAtArrival(activeCategories) {
+  const hasTextCards = getEnabledCards(activeCategories).length > 0;
 
-  若塔罗或礼物数据尚未填充，相关类型不会参与随机池。
-*/
-function createReplyAtArrival() {
-  const availableCreators = [
-    createTextCardPayloadAtArrival
-  ];
+  const availableCreators = [];
+
+  if (hasTextCards) {
+    availableCreators.push(() =>
+      createTextCardPayloadAtArrival(activeCategories)
+    );
+  }
 
   if (tarotCards.length) {
-    availableCreators.push(createTarotPayloadAtArrival);
+    availableCreators.push(() =>
+      createTarotPayloadAtArrival(activeCategories)
+    );
   }
 
   if (giftItems.length) {
-    availableCreators.push(createGiftPayloadAtArrival);
+    availableCreators.push(() =>
+      createGiftPayloadAtArrival(activeCategories)
+    );
   }
 
   if (tarotCards.length && giftItems.length) {
-    availableCreators.push(createComboPayloadAtArrival);
+    availableCreators.push(() =>
+      createComboPayloadAtArrival(activeCategories)
+    );
+  }
+
+  /*
+    正常情况下 UI 已确保至少选中一个分类。
+    此处仍保留防御性兜底，避免历史 Session 或异常数据造成报错。
+  */
+  if (!availableCreators.length) {
+    return {
+      type: "text-cards",
+      cards: [],
+      tarot: null,
+      gift: null
+    };
   }
 
   return chooseRandom(availableCreators)();
@@ -297,8 +343,9 @@ function createFallbackPayloadAtDeadline() {
   };
 }
 
-function createSession(recipient, question) {
+function createSession(recipient, question, activeCategories) {
   const settings = getSettings();
+
   const waitSeconds = Math.max(
     30,
     Math.min(900, Number(settings.waitSeconds) || 300)
@@ -310,11 +357,13 @@ function createSession(recipient, question) {
     id: createId("session"),
     recipient,
     question,
+    activeCategories: [...new Set(activeCategories)],
     createdAt,
     deadlineAt: createdAt + waitSeconds * 1000,
     status: "waiting"
   };
 }
+
 
 function createQuestionMessage(session) {
   return {
@@ -333,11 +382,12 @@ function createResponseMessage(session, source) {
     recipient: session.recipient,
     source,
     payload: source === "normal"
-      ? createReplyAtArrival()
+      ? createReplyAtArrival(session.activeCategories || [])
       : createFallbackPayloadAtDeadline(),
     createdAt: Date.now()
   };
 }
+
 
 function createCardsMarkup(cards = []) {
   if (!cards.length) {
@@ -728,6 +778,62 @@ function updateWaitTimeLabel() {
 function updateCharacterCount() {
   characterCount.textContent = `${questionInput.value.length} / 160`;
 }
+function getQuestionCategoryNames() {
+  const allCategories = getAllCardCategories();
+
+  return Object.keys(allCategories).filter(
+    (category) =>
+      Array.isArray(allCategories[category]) &&
+      allCategories[category].length
+  );
+}
+
+function getSelectedResponseCategories() {
+  return [...responseCategoryOptions.querySelectorAll("input:checked")]
+    .map((input) => input.value);
+}
+
+function updateResponseCategoryState() {
+  const selectedCategories = getSelectedResponseCategories();
+  const allCategories = getQuestionCategoryNames();
+
+  responseCategoryWarning.classList.toggle(
+    "is-hidden",
+    selectedCategories.length > 0
+  );
+
+  selectAllCategoriesButton.textContent =
+    selectedCategories.length === allCategories.length
+      ? "清除"
+      : "全选";
+}
+
+function renderResponseCategoryOptions() {
+  const settings = getSettings();
+  const categoryNames = getQuestionCategoryNames();
+
+  const activeSet = new Set(
+    Array.isArray(settings.activeCategories)
+      ? settings.activeCategories
+      : []
+  );
+
+  responseCategoryOptions.innerHTML = categoryNames
+    .map((category) => `
+      <label class="response-category-option">
+        <input
+          type="checkbox"
+          value="${escapeHtml(category)}"
+          ${activeSet.has(category) ? "checked" : ""}
+        />
+        <span>${escapeHtml(category)}</span>
+      </label>
+    `)
+    .join("");
+
+  updateResponseCategoryState();
+}
+
 
 function submitQuestion(event) {
   event.preventDefault();
@@ -738,6 +844,18 @@ function submitQuestion(event) {
 
   const recipient = recipientInput.value.trim();
   const question = questionInput.value.trim();
+
+    const selectedCategories = getSelectedResponseCategories();
+
+  if (!selectedCategories.length) {
+    responseCategoryWarning.classList.remove("is-hidden");
+    responseCategoryOptions.scrollIntoView({
+      behavior: "smooth",
+      block: "nearest"
+    });
+    return;
+  }
+
 
   if (!recipient) {
     recipientInput.focus();
@@ -755,7 +873,12 @@ function submitQuestion(event) {
   */
   saveRecipientDraft(recipient);
 
-const session = createSession(recipient, question);
+  const session = createSession(
+    recipient,
+    question,
+    selectedCategories
+  );
+
 
 conversation.messages.push(createQuestionMessage(session));
 conversation.activeSession = session;
@@ -1044,6 +1167,7 @@ function initialize() {
   restoreRecipientDraft();
   updateWaitTimeLabel();
   updateCharacterCount();
+  renderResponseCategoryOptions();
   renderConversation();
   scheduleActiveSession();
 
@@ -1052,6 +1176,24 @@ function initialize() {
   });
 
   questionInput.addEventListener("input", updateCharacterCount);
+    responseCategoryOptions.addEventListener("change", () => {
+    updateResponseCategoryState();
+  });
+
+  selectAllCategoriesButton.addEventListener("click", () => {
+    const inputs = [
+      ...responseCategoryOptions.querySelectorAll('input[type="checkbox"]')
+    ];
+
+    const hasUnselectedCategory = inputs.some((input) => !input.checked);
+
+    inputs.forEach((input) => {
+      input.checked = hasUnselectedCategory;
+    });
+
+    updateResponseCategoryState();
+  });
+
   questionForm.addEventListener("submit", submitQuestion);
 
 
