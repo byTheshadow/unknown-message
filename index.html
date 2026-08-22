@@ -257,7 +257,7 @@
 
         <div class="question-brand">
           <span>UNKNOWN-MESSAGE</span>
-          <strong>提问箱</strong>
+          
         </div>
 
         <button
@@ -546,7 +546,7 @@
 
         <div class="settings-brand">
           <span>UNKNOWN-MESSAGE</span>
-          <strong>设置</strong>
+          
         </div>
 
         <span class="settings-index">02</span>
@@ -867,35 +867,5 @@
 <script type="module" src="./js/app.js"></script>
 
 
-  <!-- 抽屉微动效逻辑 -->
-  <script>
-    (() => {
-      const questionPage = document.getElementById("questionPage");
-      const drawerToggle = document.getElementById("drawerToggle");
-
-      if (!questionPage || !drawerToggle) {
-        return;
-      }
-
-      const updateDrawer = () => {
-        const isOpen = questionPage.classList.contains("is-drawer-open");
-        drawerToggle.setAttribute("aria-expanded", String(isOpen));
-        const state = drawerToggle.querySelector(".drawer-toggle-state");
-        if (state) {
-          state.textContent = isOpen ? "收束" : "展开";
-        }
-      };
-
-      drawerToggle.addEventListener("click", () => {
-        if (questionPage.classList.contains("is-waiting")) {
-          return;
-        }
-        questionPage.classList.toggle("is-drawer-open");
-        updateDrawer();
-      });
-
-      updateDrawer();
-    })();
-  </script>
 </body>
 </html>

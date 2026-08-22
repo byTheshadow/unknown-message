@@ -117,3 +117,31 @@ button {
     transition-duration: 0.01ms !important;
   }
 }
+/* ===== 强制所有按钮与矢量 SVG 图标居中对齐修正 ===== */
+button,
+.back-button,
+.settings-back-button,
+.header-icon-button,
+.dialog-close-button {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  line-height: 1 !important;
+  vertical-align: middle;
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+/* 确保按钮内的 SVG 图标居中且不被拉伸 */
+.back-button svg,
+.settings-back-button svg,
+.header-icon-button svg,
+.dialog-close-button svg,
+.entry-arrow svg {
+  display: block !important;
+  margin: auto !important;
+  flex-shrink: 0;
+}

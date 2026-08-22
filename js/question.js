@@ -1227,4 +1227,29 @@ export function refreshQuestionPage() {
 
 // 保持原本的初始化调用
 initialize();
+// ===== 提问抽屉折叠/展开交互逻辑 =====
+const drawerToggle = document.querySelector("#drawerToggle");
+
+function updateDrawerState() {
+  if (!questionPage || !drawerToggle) return;
+  const isOpen = questionPage.classList.contains("is-drawer-open");
+  drawerToggle.setAttribute("aria-expanded", String(isOpen));
+  const state = drawerToggle.querySelector(".drawer-toggle-state");
+  if (state) {
+    state.textContent = isOpen ? "收束" : "展开";
+  }
+}
+
+if (drawerToggle && questionPage) {
+  drawerToggle.addEventListener("click", () => {
+    if (questionPage.classList.contains("is-waiting")) {
+      return;
+    }
+    questionPage.classList.toggle("is-drawer-open");
+    updateDrawerState();
+  });
+
+  // 初始化一次状态
+  updateDrawerState();
+}
 

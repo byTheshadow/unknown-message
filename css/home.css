@@ -459,3 +459,16 @@
     font-size: 6px;
   }
 }
+/* 修复移动端 WebView 按钮文本变蓝问题 */
+.home-entry {
+  color: var(--ink) !important;
+  text-decoration: none;
+  background: transparent;
+  text-align: left;
+}
+
+.home-entry strong,
+.home-entry small,
+.home-entry em {
+  color: inherit !important;
+}
