@@ -1,0 +1,469 @@
+/* =========================================================
+   未读信号提问箱：固定三层布局覆盖
+   顶部固定 / 中部独立滚动 / 底部提问抽屉固定
+   ========================================================= */
+
+html,
+body {
+  width: 100%;
+  min-height: 100%;
+  overflow: hidden;
+}
+
+body {
+  overscroll-behavior: none;
+}
+
+.question-page {
+  position: relative;
+  display: grid;
+  grid-template-rows: auto auto minmax(0, 1fr) auto;
+  width: 100%;
+  height: 100svh;
+  min-height: 100svh;
+  max-height: 100svh;
+  overflow: hidden;
+  isolation: isolate;
+}
+
+/* 顶部导航与状态栏固定在页面顶部 */
+
+.question-header,
+.session-meta,
+.conversation-area,
+.composer-panel {
+  position: relative;
+  z-index: 2;
+  width: min(100%, 760px);
+  margin-right: auto;
+  margin-left: auto;
+}
+
+.question-header {
+  grid-row: 1;
+  width: min(100%, 760px);
+  padding-top: max(20px, env(safe-area-inset-top));
+  padding-right: 24px;
+  padding-left: 24px;
+}
+
+.session-meta {
+  grid-row: 2;
+  width: min(100%, 760px);
+  padding-top: 20px;
+  padding-right: 24px;
+  padding-bottom: 12px;
+  padding-left: 24px;
+}
+
+/* 中部聊天区域是唯一纵向滚动容器 */
+
+.conversation-area {
+  grid-row: 3;
+  width: min(100%, 760px);
+  min-height: 0;
+  padding: 12px 24px 28px;
+  overflow-x: hidden;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+}
+
+.conversation-area::-webkit-scrollbar {
+  display: none;
+}
+
+.message-list {
+  min-height: 100%;
+  padding-top: 8px;
+  padding-bottom: 16px;
+}
+
+/* 空状态固定处于聊天区域中央，而非页面中央 */
+
+.empty-conversation {
+  min-height: 100%;
+  padding-top: 36px;
+  padding-bottom: 36px;
+}
+
+.question-page:not(.is-pristine) .empty-conversation {
+  display: none;
+}
+
+.question-page.is-pristine .conversation-area {
+  display: grid;
+  min-height: 0;
+  place-items: stretch;
+}
+
+.question-page.is-pristine .empty-conversation {
+  min-height: 100%;
+}
+
+.question-page.is-pristine .composer-panel {
+  width: min(100%, 760px);
+  margin: 0 auto;
+  padding: 0 24px max(12px, env(safe-area-inset-bottom));
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+
+.question-page.is-pristine .composer-intro {
+  align-items: flex-start;
+  text-align: left;
+}
+
+.question-page.is-pristine .composer-intro strong {
+  font-size: 18px;
+}
+
+/* =========================================================
+   底部提问抽屉
+   ========================================================= */
+
+.composer-panel {
+  grid-row: 4;
+  align-self: end;
+  width: min(100%, 760px);
+  max-height: min(68svh, 620px);
+  margin: 0 auto;
+  padding: 0 24px max(12px, env(safe-area-inset-bottom));
+  overflow: visible;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+  transition: max-height 0.38s cubic-bezier(0.22, 0.8, 0.22, 1);
+}
+
+.composer-panel::before {
+  position: absolute;
+  right: 8px;
+  bottom: 0;
+  left: 8px;
+  z-index: -1;
+  height: calc(100% - 12px);
+  content: "";
+  border: 1px solid rgba(17, 17, 17, 0.12);
+  border-bottom: 0;
+  border-radius: 22px 22px 0 0;
+  background:
+    linear-gradient(
+      135deg,
+      rgba(255, 255, 255, 0.76),
+      rgba(255, 255, 255, 0.3)
+    );
+  box-shadow:
+    0 -18px 42px rgba(17, 17, 17, 0.08),
+    0 -2px 0 rgba(255, 255, 255, 0.64) inset,
+    0 0 0 1px rgba(255, 255, 255, 0.24) inset;
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+}
+
+.composer-panel::after {
+  position: absolute;
+  right: 19px;
+  bottom: 6px;
+  left: 19px;
+  z-index: -2;
+  height: calc(100% - 4px);
+  content: "";
+  border: 1px solid rgba(17, 17, 17, 0.08);
+  border-bottom: 0;
+  border-radius: 25px 25px 0 0;
+  background: rgba(255, 255, 255, 0.16);
+  box-shadow: 0 -10px 28px rgba(17, 17, 17, 0.05);
+}
+
+.composer-drawer-top {
+  position: relative;
+  z-index: 2;
+  margin: 0 8px;
+}
+
+.composer-drawer-layer {
+  position: absolute;
+  right: 14px;
+  left: 14px;
+  height: 12px;
+  border: 1px solid rgba(17, 17, 17, 0.1);
+  border-bottom: 0;
+  border-radius: 18px 18px 0 0;
+  pointer-events: none;
+}
+
+.composer-drawer-layer-one {
+  top: -7px;
+  opacity: 0.55;
+}
+
+.composer-drawer-layer-two {
+  top: -12px;
+  right: 24px;
+  left: 24px;
+  opacity: 0.28;
+}
+
+.drawer-toggle {
+  position: relative;
+  display: grid;
+  grid-template-columns: 34px 1fr auto;
+  align-items: center;
+  width: 100%;
+  min-height: 66px;
+  padding: 11px 17px;
+  overflow: hidden;
+  border: 1px solid rgba(17, 17, 17, 0.16);
+  border-radius: 18px 18px 8px 8px;
+  color: var(--ink);
+  background:
+    linear-gradient(
+      180deg,
+      rgba(255, 255, 255, 0.72),
+      rgba(255, 255, 255, 0.28)
+    );
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.85) inset,
+    0 12px 30px rgba(17, 17, 17, 0.06);
+  cursor: pointer;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  transition:
+    border-color 0.25s ease,
+    background 0.25s ease,
+    transform 0.25s ease;
+}
+
+.drawer-toggle:hover,
+.drawer-toggle:focus-visible {
+  border-color: rgba(17, 17, 17, 0.44);
+  outline: none;
+  background: rgba(255, 255, 255, 0.7);
+  transform: translateY(-1px);
+}
+
+.drawer-handle {
+  display: block;
+  width: 22px;
+  height: 3px;
+  border-radius: 99px;
+  background: var(--ink);
+  box-shadow: 0 4px 0 rgba(17, 17, 17, 0.16);
+  transition: transform 0.3s ease;
+}
+
+.drawer-toggle-copy {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 5px;
+  min-width: 0;
+}
+
+.drawer-toggle-copy span,
+.drawer-toggle-state {
+  color: var(--ink-muted);
+  font-family: var(--font-mono);
+  font-size: 8px;
+  letter-spacing: 0.12em;
+}
+
+.drawer-toggle-copy strong {
+  font-size: 14px;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+}
+
+.drawer-toggle-state {
+  padding-left: 12px;
+  color: var(--ink-soft);
+}
+
+.composer-drawer-content {
+  display: grid;
+  grid-template-rows: 1fr;
+  max-height: 510px;
+  padding: 18px 18px 12px;
+  overflow: hidden;
+  opacity: 1;
+  transform: translateY(0);
+  transition:
+    max-height 0.38s cubic-bezier(0.22, 0.8, 0.22, 1),
+    padding 0.38s cubic-bezier(0.22, 0.8, 0.22, 1),
+    opacity 0.2s ease,
+    transform 0.32s ease;
+}
+
+/* 收束后的抽屉仅保留控制按钮 */
+
+.question-page:not(.is-drawer-open) .composer-panel {
+  max-height: 82px;
+}
+
+.question-page:not(.is-drawer-open) .composer-drawer-content {
+  max-height: 0;
+  padding-top: 0;
+  padding-bottom: 0;
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(10px);
+}
+
+.question-page:not(.is-drawer-open) .drawer-handle {
+  transform: rotate(180deg);
+}
+
+/* 等待状态必须彻底隐藏提问抽屉 */
+
+.question-page.is-waiting .composer-panel {
+  display: none;
+}
+
+/* 保持原表单的终端式结构，避免聊天输入框视觉 */
+
+.composer-intro {
+  gap: 7px;
+  margin-bottom: 14px;
+}
+
+.composer-intro strong {
+  font-size: 18px;
+}
+
+.question-form {
+  grid-template-columns: minmax(130px, 0.36fr) 1fr;
+}
+
+.field-group {
+  border-color: rgba(17, 17, 17, 0.16);
+  border-radius: 6px;
+  background:
+    linear-gradient(
+      135deg,
+      rgba(255, 255, 255, 0.58),
+      rgba(255, 255, 255, 0.22)
+    );
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+.field-group:focus-within {
+  border-color: rgba(17, 17, 17, 0.5);
+  background: rgba(255, 255, 255, 0.72);
+}
+
+.send-button {
+  border-radius: 4px;
+}
+
+.record-notice {
+  margin-top: 10px;
+  padding-top: 9px;
+  border-top: 1px solid rgba(17, 17, 17, 0.1);
+}
+
+/* =========================================================
+   小屏幕适配
+   ========================================================= */
+
+@media (max-width: 560px) {
+  .question-header {
+    padding-right: 18px;
+    padding-left: 18px;
+  }
+
+  .session-meta {
+    padding-right: 20px;
+    padding-left: 20px;
+  }
+
+  .conversation-area {
+    padding-right: 20px;
+    padding-bottom: 22px;
+    padding-left: 20px;
+  }
+
+  .composer-panel,
+  .question-page.is-pristine .composer-panel {
+    padding-right: 20px;
+    padding-left: 20px;
+  }
+
+  .composer-drawer-content {
+    max-height: 560px;
+    padding-right: 14px;
+    padding-left: 14px;
+  }
+
+  .question-form {
+    grid-template-columns: 1fr;
+  }
+
+  .field-question {
+    grid-row: auto;
+    min-height: 122px;
+  }
+
+  .field-question textarea {
+    min-height: 72px;
+  }
+
+  .form-bottom {
+    min-height: 48px;
+  }
+
+  .drawer-toggle {
+    min-height: 62px;
+    padding-right: 14px;
+    padding-left: 14px;
+  }
+
+  .drawer-toggle-copy strong {
+    font-size: 13px;
+  }
+
+  .empty-conversation h1 {
+    font-size: 19px;
+  }
+}
+
+@media (max-width: 390px) {
+  .drawer-toggle {
+    grid-template-columns: 28px 1fr auto;
+  }
+
+  .drawer-toggle-copy span,
+  .drawer-toggle-state {
+    font-size: 7px;
+  }
+
+  .drawer-toggle-copy strong {
+    font-size: 12px;
+  }
+
+  .composer-drawer-content {
+    padding-right: 12px;
+    padding-left: 12px;
+  }
+
+  .record-notice {
+    font-size: 7px;
+  }
+}
+
+/* 减少动态效果偏好 */
+
+@media (prefers-reduced-motion: reduce) {
+  .composer-panel,
+  .composer-drawer-content,
+  .drawer-toggle,
+  .drawer-handle {
+    transition: none;
+  }
+}
